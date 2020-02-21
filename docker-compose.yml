@@ -1,0 +1,32 @@
+version: 'v3'
+
+services:
+  mysql:
+    image: mysql:latest
+    hostname: mysql
+    container_name: ecms_mysql
+    restart: always
+    ports:
+    - 3306:3306
+  nginx:
+    image: nginx:latest
+    hostname: nginx
+    container_name: ecms_nginx
+    restart: always
+    ports:
+    - 443:443
+    - 80:80
+    volumes:
+    - .:/usr/share/ecms
+  redis:
+    image: redis:latest
+    hostname: redis
+    container_name: ecms_redis
+    restart: always
+  php:
+    image: php:7.4-fpm-alpine
+    hostname: php
+    container_name: ecms_php
+    restart: always
+    volumes:
+    - .:/var/www/html
