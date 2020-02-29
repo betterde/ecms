@@ -34,6 +34,9 @@ class OrderController extends Controller
              */
             return $query->where('type', $type);
         });
+
+        $query->orderByDesc('id');
+
         return success($query->paginate($size));
     }
 
@@ -47,12 +50,17 @@ class OrderController extends Controller
     public function store(Request $request)
     {
         $attributes = $this->validate($request, [
-            'type' => 'required|in:采购,销售',
+            'type' => 'required|in:采购,销售,邮费',
             'total' => 'required|money',
             'discount' => 'required|integer',
             'date' => 'required|date',
             'remark' => 'nullable|string',
         ]);
+
+        if ($attributes['type'] === '邮费') {
+            $attributes['actual'] = $attributes['total'];
+            $attributes['cost'] = $attributes['total'];
+        }
 
         $order = Order::create($attributes);
         return stored($order);

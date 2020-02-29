@@ -1,23 +1,13 @@
-version: 'v3'
+version: '3.7'
 
 services:
   mysql:
-    image: mysql:latest
+    image: mysql:${POSTGRES_VERSION:-latest}
     hostname: mysql
     container_name: ecms_mysql
     restart: always
     ports:
     - 3306:3306
-  nginx:
-    image: nginx:latest
-    hostname: nginx
-    container_name: ecms_nginx
-    restart: always
-    ports:
-    - 443:443
-    - 80:80
-    volumes:
-    - .:/usr/share/ecms
   redis:
     image: redis:latest
     hostname: redis
@@ -28,5 +18,21 @@ services:
     hostname: php
     container_name: ecms_php
     restart: always
+    depends_on:
+      - mysql
     volumes:
     - .:/var/www/html
+  nginx:
+    image: nginx:latest
+    hostname: nginx
+    container_name: ecms_nginx
+    restart: always
+    depends_on:
+      - php
+      - redis
+    ports:
+      - 443:443
+      - 80:80
+    volumes:
+      - .:/usr/share/ecms
+

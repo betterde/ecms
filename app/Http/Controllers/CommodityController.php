@@ -131,8 +131,7 @@ class CommodityController extends Controller
             'remark' => 'nullable|string',
             'image' => 'nullable|string',
             'barcode' => 'nullable|string',
-            'amount' => 'integer',
-            'description' => 'nullable|string',
+            'description' => 'nullable|string'
         ]);
         $commodity = Commodity::create($attributes);
         return stored($commodity);
@@ -161,6 +160,7 @@ class CommodityController extends Controller
     public function update(Request $request, Commodity $commodity)
     {
         $attributes = $this->validate($request, [
+            'brand' => 'required|string',
             'name' => 'required|string',
             'unit' => 'required|string',
             'specification' => 'nullable|string',
@@ -168,8 +168,7 @@ class CommodityController extends Controller
             'remark' => 'nullable|string',
             'image' => 'nullable|string',
             'barcode' => 'nullable|string',
-            'amount' => 'integer',
-            'description' => 'nullable|string',
+            'description' => 'nullable|string'
         ]);
         $commodity->update($attributes);
         return updated($commodity);
@@ -184,6 +183,9 @@ class CommodityController extends Controller
      */
     public function destroy(Commodity $commodity)
     {
+        if ($commodity->amount > 0) {
+            return failed("当前商品还有库存无法删除", 422);
+        }
         $commodity->delete();
         return deleted();
     }
