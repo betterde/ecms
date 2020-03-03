@@ -2,12 +2,10 @@ version: '3.7'
 
 services:
   mysql:
-    image: mysql:${POSTGRES_VERSION:-latest}
+    image: mysql:latest
     hostname: mysql
     container_name: ecms_mysql
     restart: always
-    ports:
-    - 3306:3306
   redis:
     image: redis:latest
     hostname: redis
@@ -35,4 +33,5 @@ services:
       - 80:80
     volumes:
       - .:/usr/share/ecms
+      - ./ecms.betterde.com.conf:/etc/nginx/
 

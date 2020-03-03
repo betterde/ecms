@@ -234,7 +234,7 @@ class TradingController extends Controller
     public function destroy(Trading $trading)
     {
         DB::transaction(function () use($trading) {
-            if ($trading->order->type == '采购') {
+            if ($trading->order->type === '采购') {
                 $trading->order->total -= $trading->total;
                 $pricing = Pricing::where('trading_id', $trading->id)->firstOrFail();
                 $trading->order->cost -= $pricing->amount * $pricing->buying;
@@ -244,8 +244,8 @@ class TradingController extends Controller
 
                 $trading->commodity->amount -= $trading->amount;
 
-            } elseif ($trading->order->type == '销售') {
-                $trading->order->total += $trading->total;
+            } elseif ($trading->order->type === '销售') {
+                $trading->order->total -= $trading->total;
                 /**
                  * @var Inventory[] $inventories
                  */
@@ -258,7 +258,7 @@ class TradingController extends Controller
                     $inventory->delete();
                 }
 
-                $trading->order->cast -= $cost;
+                $trading->order->cost -= $cost;
                 $trading->order->actual -= ($trading->total / ($trading->order->discount / 100));
                 $trading->order->profit = $trading->order->actual - $trading->order->cost;
 
