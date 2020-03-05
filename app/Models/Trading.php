@@ -6,6 +6,7 @@ use Eloquent;
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
@@ -13,13 +14,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *
  * @property int $id
  * @property string $purchaser 消费者ID
- * @property string $type 交易类型
  * @property float $total 总价
  * @property float $postage 邮费
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Order|null $order 商品信息模型
  * @property Commodity|null $commodity 商品信息模型
+ * @property Inventory[]|null $inventories
  * @method static Builder|Trading newModelQuery()
  * @method static Builder|Trading newQuery()
  * @method static Builder|Trading query()
@@ -74,6 +75,11 @@ class Trading extends Model
         return $this->belongsTo(Commodity::class, 'commodity_id', 'id', 'commodity');
     }
 
+    /**
+     * Date: 2020/3/5
+     * @return HasMany
+     * @author George
+     */
     public function inventories()
     {
         return $this->hasMany(Inventory::class, 'trading_id', 'id');

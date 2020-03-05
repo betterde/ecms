@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Commodity;
-use App\Models\Inventory;
-use Composer\DependencyResolver\Problem;
 use Exception;
 use Throwable;
 use App\Models\Trading;
 use App\Models\Pricing;
+use App\Models\Commodity;
+use App\Models\Inventory;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
@@ -37,7 +36,7 @@ class TradingController extends Controller
         $descend = (boolean)$request->post('descend', false);
         $query = Trading::leftJoin('commodities', 'tradings.commodity_id', '=', 'commodities.id');
         $query->select([
-            'tradings.id', 'tradings.amount', 'tradings.price', 'tradings.total',
+            'tradings.id', 'tradings.amount', 'tradings.price', 'tradings.total', 'tradings.commodity_id',
             'commodities.name', 'commodities.brand', 'commodities.unit', 'commodities.specification',
             'tradings.created_at', 'tradings.updated_at'
         ]);
@@ -80,9 +79,8 @@ class TradingController extends Controller
             'total' => 'required|money',
         ]);
 
-        $trading = new Trading($attributes);
-
-        DB::transaction(function () use ($trading, $attributes) {
+        $trading = DB::transaction(function () use ($attributes) {
+            $trading = new Trading($attributes);
             $trading->order->total += $attributes['total'];
             $trading->saveOrFail();
 
@@ -121,13 +119,13 @@ class TradingController extends Controller
                     } else {
                         $amount -= $pricing->amount;
                         $trading->order->cost += $pricing->amount * $pricing->buying;
-                        $pricing->amount = 0;
-                        $pricing->saveOrFail();
                         Inventory::create([
                             'trading_id' => $trading->id,
                             'pricing_id' => $pricing->id,
-                            'amount' => $amount,
+                            'amount' => $pricing->amount,
                         ]);
+                        $pricing->amount = 0;
+                        $pricing->saveOrFail();
                     }
                 }
                 $trading->commodity->amount -= $attributes['amount'];
@@ -137,6 +135,7 @@ class TradingController extends Controller
             $trading->order->profit = $trading->order->actual - $trading->order->cost;
             $trading->commodity->saveOrFail();
             $trading->order->saveOrFail();
+            return $trading;
         }, 3);
 
         return stored($trading);
@@ -151,76 +150,6 @@ class TradingController extends Controller
     public function show(Trading $trading)
     {
         return success($trading);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param Request $request
-     * @param Trading $trading
-     * @return JsonResponse
-     * @throws ValidationException
-     * @throws Throwable
-     */
-    public function update(Request $request, Trading $trading)
-    {
-        $attributes = $this->validate($request, [
-            'commodity_id' => 'required|integer',
-            'amount' => 'required|integer',
-            'price' => 'required|money',
-            'total' => 'required|money',
-        ]);
-
-        DB::transaction(function () use($trading, $attributes) {
-            $trading->order->total -= $trading->total;
-            $trading->order->total += $attributes['total'];
-
-            // 如果选择的是新的商品
-            if ($trading->commodity_id != $attributes['commodity_id']) {
-                $commodity = Commodity::findOrFail($attributes['commodity_id']);
-                // 判断订单类型
-                if ($trading->order->type == '采购') {
-                    // 如果是采购，则减少之前商品的数量
-                    $trading->commodity->amount -= $trading->amount;
-                    $trading->commodity->saveOrFail();
-                    // 然后对最新选择的商品数量进行累加
-                    $commodity->amount += $attributes['amount'];
-                } elseif ($trading->order->type == '销售') {
-                    // 如果是销售，则还增加前商品的数量
-                    $trading->commodity->amount += $trading->amount;
-                    $trading->commodity->saveOrFail();
-                    // 然后对新选择的商品数量进行减少
-                    $commodity->amount -= $attributes['amount'];
-                }
-            }
-
-            // 如果改动前后的商品数量不同，则更新商品的库存数量
-            if ($trading->amount != $attributes['amount']) {
-                if ($trading->order->type == '采购') {
-                    $trading->commodity->amount -= $trading->amount;
-                    $trading->commodity->amount += $attributes['amount'];
-                } elseif ($trading->order->type == '销售') {
-                    $trading->commodity->amount += $trading->amount;
-                    $trading->commodity->amount -= $attributes['amount'];
-                }
-            }
-
-            // 如果改动前后的单价不同，则更新商品价格记录
-            if ($trading->price != $attributes['price']) {
-                $pricing = Pricing::where([
-                    'commodity_id' => $trading->commodity_id,
-                    'buying' => $trading->price
-                ])->orWhereBetween('date', [date('Y-m-01'), date('Y-m-t')])->first();
-                $pricing->amount = $attributes['amount'];
-                $pricing->buying = $attributes['price'];
-                $pricing->saveOrFail();
-            }
-
-            $trading->order->saveOrFail();
-            $trading->update($attributes);
-        });
-
-        return updated($trading);
     }
 
     /**

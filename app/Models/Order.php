@@ -16,8 +16,7 @@ use Illuminate\Database\Eloquent\Builder;
  * @author George
  * @package App\Models
  * @property int $id
- * @property string $type 交易类型：收入、支出
- * @property string $remark 用途：进货、出货、邮费
+ * @property string $type 交易类型：采购、销售
  * @property float $money 总金额
  * @property float $profit 总利润
  * @property Carbon|null $created_at

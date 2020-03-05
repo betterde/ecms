@@ -25,7 +25,7 @@ Route::group(['prefix' => 'auth', 'namespace' => 'Auth'], function () {
 
 Route::group(['middleware' => 'auth:users'], function () {
     Route::get('dashboard', 'DashboardController@index');
-    Route::apiResource('trading', 'TradingController');
+    Route::apiResource('trading', 'TradingController')->except('update');
     Route::apiResource('customer', 'CustomerController');
     Route::get('commodity/brand', 'CommodityController@brand');
     Route::get('commodity/category', 'CommodityController@category');

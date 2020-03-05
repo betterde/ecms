@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * Date: 2020/2/4
  * @author George
  * @package App\Models
+ * @property Pricing[] $pricings
  * @mixin Eloquent
  */
 class Commodity extends Model
