@@ -36,7 +36,9 @@ class CommodityController extends Controller
             /**
              * @var Builder $query
              */
-            return $query->where('name', 'like', "%$search%");
+            return $query->where('name', 'like', "%$search%")
+                ->orWhere('brand', 'like', "%$search%")
+                ->orWhere('category', 'like', "%$search%");
         });
 
         switch ($scene) {

@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\PurchasingListExport;
 use Exception;
 use App\Models\Order;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 /**
  * Order logic controller
@@ -70,12 +73,21 @@ class OrderController extends Controller
      * Display the specified resource.
      *
      * @param Order $order
-     * @return JsonResponse
+     * @param Request $request
+     * @return JsonResponse|BinaryFileResponse
      */
-    public function show(Order $order)
+    public function show(Order $order, Request $request)
     {
-        $order->tradings = $order->tradings()->get();
-        return success($order);
+        $scene = $request->get('scene', 'detail');
+        switch ($scene) {
+            case 'excel':
+                $name = sprintf('%s.xlsx', $order->date);
+                return (new PurchasingListExport($order->id))->download($name);
+            case 'detail':
+            default:
+            $order->tradings = $order->tradings()->get();
+            return success($order);
+        }
     }
 
     /**

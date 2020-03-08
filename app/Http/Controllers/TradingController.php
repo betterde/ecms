@@ -79,11 +79,11 @@ class TradingController extends Controller
             'total' => 'required|money',
         ]);
 
-        $trading = DB::transaction(function () use ($attributes) {
+        try {
+            DB::beginTransaction();
             $trading = new Trading($attributes);
             $trading->order->total += $attributes['total'];
             $trading->saveOrFail();
-
             if ($trading->order->type == '采购') {
                 Pricing::create([
                     'trading_id' => $trading->id,
@@ -130,15 +130,15 @@ class TradingController extends Controller
                 }
                 $trading->commodity->amount -= $attributes['amount'];
             }
-
             $trading->order->actual += ($attributes['amount'] * $attributes['price']) * ($trading->order->discount / 100);
             $trading->order->profit = $trading->order->actual - $trading->order->cost;
             $trading->commodity->saveOrFail();
             $trading->order->saveOrFail();
-            return $trading;
-        }, 3);
-
-        return stored($trading);
+            return stored($trading);
+        } catch (Throwable $exception) {
+            DB::rollBack();
+            return failed($exception->getMessage(), 500);
+        }
     }
 
     /**
