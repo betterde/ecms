@@ -22,11 +22,13 @@ class DashboardController extends Controller
             }
         }
 
+        $reduced = (float)Order::whereDate('date', date('Y-m-d'))->where('type', '满减')->sum('total');
+
         $summary = [
             'day' => Order::whereDate('date', date('Y-m-d'))->where('type', '销售')->count(),
             'month' => Order::whereBetween('date', [date('Y-m-01'), date('Y-m-t')])->where('type', '销售')->count(),
-            'daily_turnover' => (float)Order::whereDate('date', date('Y-m-d'))->where('type', '销售')->sum('total'),
-            'daily_profit' => (float)Order::whereDate('date', date('Y-m-d'))->where('type', '销售')->sum('profit'),
+            'daily_turnover' => (float)Order::whereDate('date', date('Y-m-d'))->where('type', '销售')->sum('total') - $reduced,
+            'daily_profit' => (float)Order::whereDate('date', date('Y-m-d'))->where('type', '销售')->sum('profit') - $reduced,
             'inventory_cost' => $inventory_cost,
             'purchasing_cost' => (float)Order::whereIn('type', ['采购', '邮费'])->sum('actual'),
             'sales_amount' => (float)Order::where('type', '销售')->sum('actual'),

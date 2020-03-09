@@ -17,8 +17,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @package App\Models
  * @property int $id
  * @property string $type 交易类型：采购、销售
- * @property float $money 总金额
+ * @property float $total 总金额
+ * @property integer $discount 折扣
+ * @property float $actual 实际金额
+ * @property float $cost 成本
  * @property float $profit 总利润
+ * @property string $date 日期
+ * @property string $remark 备注
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @method static Builder|Order newModelQuery()

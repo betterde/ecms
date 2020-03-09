@@ -53,7 +53,7 @@ class OrderController extends Controller
     public function store(Request $request)
     {
         $attributes = $this->validate($request, [
-            'type' => 'required|in:采购,销售,邮费',
+            'type' => 'required|in:采购,销售,邮费,满减',
             'total' => 'required|money',
             'discount' => 'required|integer',
             'date' => 'required|date',
@@ -63,6 +63,10 @@ class OrderController extends Controller
         if ($attributes['type'] === '邮费') {
             $attributes['actual'] = $attributes['total'];
             $attributes['cost'] = $attributes['total'];
+        }
+
+        if ($attributes['type'] === '满减') {
+            $attributes['actual'] = $attributes['total'];
         }
 
         $order = Order::create($attributes);
