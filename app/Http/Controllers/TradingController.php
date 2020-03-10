@@ -134,6 +134,7 @@ class TradingController extends Controller
             $trading->order->profit = $trading->order->actual - $trading->order->cost;
             $trading->commodity->saveOrFail();
             $trading->order->saveOrFail();
+            DB::commit();
             return stored($trading);
         } catch (Throwable $exception) {
             DB::rollBack();
