@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Exports\PurchasingListExport;
 use Exception;
 use App\Models\Order;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Response;
+use App\Exports\PurchasingListExport;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
@@ -125,6 +124,9 @@ class OrderController extends Controller
      */
     public function destroy(Order $order)
     {
+        if ($order->tradings()->count() > 0) {
+            return failed('请先删除订单里的商品', 422);
+        } 
         $order->delete();
         return deleted();
     }
