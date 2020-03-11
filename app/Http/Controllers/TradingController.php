@@ -166,14 +166,11 @@ class TradingController extends Controller
         DB::transaction(function () use($trading) {
             if ($trading->order->type === '采购') {
                 $trading->order->total -= $trading->total;
-                $pricing = Pricing::where('trading_id', $trading->id)->firstOrFail();
+                $pricing = Pricing::where('trading_id', $trading->id)->where('commodity_id', $trading->commodity_id)->firstOrFail();
                 $trading->order->cost -= $pricing->amount * $pricing->buying;
                 $pricing->delete();
-
                 $trading->order->actual -= ($trading->total / ($trading->order->discount / 100));
-
                 $trading->commodity->amount -= $trading->amount;
-
             } elseif ($trading->order->type === '销售') {
                 $trading->order->total -= $trading->total;
                 /**
@@ -191,7 +188,6 @@ class TradingController extends Controller
                 $trading->order->cost -= $cost;
                 $trading->order->actual -= ($trading->total / ($trading->order->discount / 100));
                 $trading->order->profit = $trading->order->actual - $trading->order->cost;
-
                 $trading->commodity->amount += $trading->amount;
             }
 
