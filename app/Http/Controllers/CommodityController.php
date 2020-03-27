@@ -115,6 +115,12 @@ class CommodityController extends Controller
         return success($brands);
     }
 
+    public function unit()
+    {
+        $units = Commodity::select(['unit as name'])->groupBy('unit')->get();
+        return success($units);
+    }
+
     /**
      * Store a newly created resource in storage.
      *

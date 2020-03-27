@@ -126,7 +126,7 @@ class OrderController extends Controller
     {
         if ($order->tradings()->count() > 0) {
             return failed('请先删除订单里的商品', 422);
-        } 
+        }
         $order->delete();
         return deleted();
     }
