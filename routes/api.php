@@ -1,7 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
-
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -29,6 +27,7 @@ Route::group(['middleware' => 'auth:users'], function () {
     Route::apiResource('customer', 'CustomerController');
     Route::get('commodity/brand', 'CommodityController@brand');
     Route::get('commodity/category', 'CommodityController@category');
+    Route::get('commodity/unit', 'CommodityController@unit');
     Route::apiResource('commodity', 'CommodityController');
     Route::apiResource('order', 'OrderController');
 });
