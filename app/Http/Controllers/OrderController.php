@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use Exception;
 use App\Models\Order;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Excel;
 use Illuminate\Http\JsonResponse;
 use App\Exports\PurchasingListExport;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Validation\ValidationException;
+use PhpOffice\PhpSpreadsheet\Shared\Font;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 /**
@@ -85,7 +87,7 @@ class OrderController extends Controller
         switch ($scene) {
             case 'excel':
                 $name = sprintf('%s.xlsx', $order->date);
-                return (new PurchasingListExport($order->id))->download($name);
+                return (new PurchasingListExport($order->id))->download($name, Excel::XLSX);
             case 'detail':
             default:
             $order->tradings = $order->tradings()->get();

@@ -115,6 +115,13 @@ class CommodityController extends Controller
         return success($brands);
     }
 
+    /**
+     * 获取库存商品的单位信息列表
+     *
+     * Date: 2020/3/27
+     * @return JsonResponse
+     * @author George
+     */
     public function unit()
     {
         $units = Commodity::select(['unit as name'])->groupBy('unit')->get();
