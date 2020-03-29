@@ -3,10 +3,15 @@
 namespace App\Exports;
 
 use App\Models\Trading;
-use Illuminate\Database\Eloquent\Builder;
-use Maatwebsite\Excel\Concerns\FromQuery;
+use Illuminate\Support\Collection;
+use Illuminate\Database\Query\Builder;
 use Maatwebsite\Excel\Concerns\Exportable;
+use PhpOffice\PhpSpreadsheet\Cell\DataType;
 use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
+use Maatwebsite\Excel\Concerns\WithColumnFormatting;
 
 /**
  * 采购列表导出
@@ -15,7 +20,7 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
  * @author George
  * @package App\Exports
  */
-class PurchasingListExport implements FromQuery, WithHeadings
+class PurchasingListExport implements FromCollection, WithHeadings, ShouldAutoSize, WithColumnFormatting
 {
     use Exportable;
 
@@ -48,14 +53,33 @@ class PurchasingListExport implements FromQuery, WithHeadings
     }
 
     /**
-     * @return Trading|Builder
+     * Date: 2020/3/29
+     * @return Trading[]|Builder[]|Collection
+     * @author George
      */
-    public function query()
+    public function collection()
     {
         $query = Trading::leftJoin('commodities', 'tradings.commodity_id', '=', 'commodities.id');
-        $query->select([
+        $tradings = $query->select([
             'commodities.brand', 'commodities.name', 'commodities.specification', 'tradings.amount', 'tradings.price', 'tradings.total'
-        ])->where('tradings.order_id', $this->order_id);
-        return $query;
+        ])->where('tradings.order_id', $this->order_id)->get();
+        $tradings->push(['总计', null, null, null, null, $tradings->sum('total')]);
+
+        return $tradings;
+    }
+
+    /**
+     * Date: 2020/3/29
+     * @return array
+     * @author George
+     */
+    public function columnFormats(): array
+    {
+        return [
+            'B' => DataType::TYPE_STRING,
+            'D' => NumberFormat::FORMAT_NUMBER,
+            'E' => NumberFormat::FORMAT_NUMBER_00,
+            'F' => NumberFormat::FORMAT_NUMBER_00
+        ];
     }
 }
