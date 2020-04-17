@@ -61,7 +61,7 @@ class DashboardController extends Controller
             $summary['tendency'][] = [
                 'date' => $day,
                 'type' => '收入',
-                'actual' => $in,
+                'actual' => (float)$in,
             ];
 
             foreach ($dailyExpend as &$expend) {
@@ -74,7 +74,7 @@ class DashboardController extends Controller
             $summary['tendency'][] = [
                 'date' => $day,
                 'type' => '支出',
-                'actual' => $ex,
+                'actual' => (float)$ex,
             ];
         }
 
