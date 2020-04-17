@@ -47,10 +47,13 @@ class DashboardController extends Controller
 
         $dailyIncome = Order::selectRaw('date, sum(actual) as actual')->where('type', '销售')->groupBy('date')->limit(30)->get();
         $dailyExpend = Order::selectRaw('date, sum(actual) as actual')->whereIn('type', ['采购', '邮费'])->groupBy('date')->limit(30)->get();
+        $dailyOrders = Order::selectRaw('date, count(id) as quantity')->where('type', '销售')->groupBy('date')->limit(30)->get();
 
         foreach ($days as $day) {
             $in = 0;
             $ex = 0;
+            $quantity = 0;
+
             foreach ($dailyIncome as &$income) {
                 if ($day == $income->date) {
                     $in = $income->actual;
@@ -59,7 +62,7 @@ class DashboardController extends Controller
             }
 
             $summary['tendency'][] = [
-                'date' => $day,
+                'date' => substr($day, 5),
                 'type' => '收入',
                 'actual' => (float)$in,
             ];
@@ -72,12 +75,23 @@ class DashboardController extends Controller
             }
 
             $summary['tendency'][] = [
-                'date' => $day,
+                'date' => substr($day, 5),
                 'type' => '支出',
                 'actual' => (float)$ex,
             ];
-        }
 
+            foreach ($dailyOrders as &$order) {
+                if ($day == $order->date) {
+                    $quantity = $order->quantity;
+                    unset($order);
+                }
+            }
+
+            $summary['order_quantity'][] = [
+                'date' => substr($day, 5),
+                'quantity' => $quantity
+            ];
+        }
 
         $summary['gross_profit'] = $summary['sales_amount'] + $summary['inventory_cost'] - $summary['purchasing_cost'];
         return success($summary);
