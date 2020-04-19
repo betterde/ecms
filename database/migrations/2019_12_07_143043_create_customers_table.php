@@ -24,14 +24,16 @@ class CreateCustomersTable extends Migration
             $table->string('name');
             $table->string('email')->nullable()->unique();
             $table->string('mobile')->nullable()->unique();
-            $table->decimal('balance', 9, 2)->default(0.00);
+            $table->decimal('balance', 9, 2)->default(0.00)->comment('钱包');
+            $table->unsignedTinyInteger('discount')->default(100)->comment('折扣');
             $table->string('password')->nullable();
             $table->boolean('vip')->default(false)->comment('会员');
             $table->string('province')->nullable()->comment('省');
             $table->string('municipality')->nullable()->comment('市');
             $table->string('prefecture')->nullable()->comment('县');
             $table->string('address')->nullable()->comment('地址');
-            $table->uuid('referrer')->nullable();
+            $table->uuid('referrer')->nullable()->comment('推荐人');
+            $table->string('remark')->nullable()->comment('备注');
             $table->timestamps();
         });
     }

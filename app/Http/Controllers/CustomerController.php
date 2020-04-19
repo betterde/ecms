@@ -2,10 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Order;
+use Exception;
+use Ramsey\Uuid\Uuid;
 use App\Models\Customer;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Validation\ValidationException;
 
 class CustomerController extends Controller
 {
@@ -18,6 +23,7 @@ class CustomerController extends Controller
     public function index(Request $request)
     {
         $size = $request->get('size', 15);
+        $scene = $request->get('scene', 'table');
         $sort = $request->get('sort', 'created_at');
         $descend = (boolean)$request->post('descend', true);
         $query = Customer::query();
@@ -28,78 +34,105 @@ class CustomerController extends Controller
             return $query->where('name', 'like', "%$search%");
         });
 
-        if ($descend) {
-            $query->orderByDesc($sort);
-        } else {
-            $query->orderBy($sort);
+        switch ($scene) {
+            case 'select':
+                return success($query->get());
+            case 'table':
+            default:
+            if ($descend) {
+                $query->orderByDesc($sort);
+            } else {
+                $query->orderBy($sort);
+            }
+
+            return success($query->paginate($size));
         }
-
-        return success($query->paginate($size));
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return JsonResponse
+     * @throws ValidationException
+     * @throws Exception
      */
     public function store(Request $request)
     {
-        //
+        $attributes = $this->validate($request, [
+            'name' => 'required',
+            'email' => 'nullable|unique:customers',
+            'mobile' => 'required|unique:customers',
+            'vip' => 'nullable|boolean',
+            'province' => 'nullable',
+            'municipality' => 'nullable',
+            'prefecture' => 'nullable',
+            'address' => 'nullable',
+            'referrer' => 'nullable',
+            'remark' => 'nullable'
+        ]);
+
+        $attributes['id'] = Uuid::uuid4()->toString();
+
+        $customer = Customer::create($attributes);
+        return stored($customer);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Customer  $customer
-     * @return \Illuminate\Http\Response
+     * @param Customer $customer
+     * @return JsonResponse
      */
     public function show(Customer $customer)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Customer  $customer
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Customer $customer)
-    {
-        //
+        $customer->orders = $customer->orders()->get();
+        return success($customer);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Customer  $customer
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @param Customer $customer
+     * @return JsonResponse
+     * @throws ValidationException
      */
     public function update(Request $request, Customer $customer)
     {
-        //
+        $attributes = $this->validate($request, [
+            'name' => 'required',
+            'email' => [
+                'required',
+                Rule::unique('customers')->ignoreModel($customer)
+            ],
+            'mobile' => [
+                'required',
+                Rule::unique('customers')->ignoreModel($customer)
+            ],
+            'vip' => 'required|boolean',
+            'province' => 'nullable',
+            'municipality' => 'nullable',
+            'prefecture' => 'nullable',
+            'address' => 'nullable',
+            'referrer' => 'nullable',
+            'remark' => 'nullable'
+        ]);
+
+        $customer->update($attributes);
+        return updated($customer);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Customer  $customer
-     * @return \Illuminate\Http\Response
+     * @param Customer $customer
+     * @return JsonResponse
+     * @throws Exception
      */
     public function destroy(Customer $customer)
     {
-        //
+        $customer->delete();
+        return deleted();
     }
 }

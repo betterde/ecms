@@ -89,6 +89,11 @@ class OrderController extends Controller
                 return (new PurchasingListExport($order->id))->download($name, Excel::XLSX);
             case 'detail':
             default:
+                if ($order->customer_id) {
+                    $order->customer = $order->customer()->first();
+                } else {
+                    $order->customer = null;
+                }
             $order->tradings = $order->tradings()->get();
             return success($order);
         }

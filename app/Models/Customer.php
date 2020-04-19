@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Support\Carbon;
 use Tymon\JWTAuth\Contracts\JWTSubject;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 /**
@@ -13,10 +14,10 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  *
  * @author George
  * @package App\Models
- * @property string $id
- * @property string $name
- * @property string|null $email
- * @property string|null $mobile
+ * @property string $id UUID
+ * @property string $name 姓名
+ * @property string|null $email 邮箱
+ * @property string|null $mobile 手机号
  * @property float $balance
  * @property string|null $password
  * @property int $vip 会员
@@ -49,9 +50,31 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 class Customer extends Authenticatable implements JWTSubject
 {
     /**
+     * @var string $primaryKey
+     */
+    protected $primaryKey = 'id';
+
+    /**
      * @var bool $incrementing
      */
     public $incrementing = false;
+
+    /**
+     * @var array $guarded
+     */
+    protected $guarded = [];
+
+    /**
+     * Define orders relation
+     *
+     * Date: 2020/4/19
+     * @return HasMany
+     * @author George
+     */
+    public function orders()
+    {
+        return $this->hasMany(Order::class, 'customer_id', 'id');
+    }
 
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.

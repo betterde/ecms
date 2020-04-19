@@ -7,6 +7,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * 订单数据模型
@@ -63,5 +64,17 @@ class Order extends Model
     public function tradings()
     {
         return $this->hasMany(Trading::class, 'order_id', 'id');
+    }
+
+    /**
+     * Define customer relation
+     *
+     * Date: 2020/4/19
+     * @return BelongsTo
+     * @author George
+     */
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class, 'customer_id', 'id');
     }
 }
