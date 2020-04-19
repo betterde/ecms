@@ -10,7 +10,6 @@ use Illuminate\Http\JsonResponse;
 use App\Exports\PurchasingListExport;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Validation\ValidationException;
-use PhpOffice\PhpSpreadsheet\Shared\Font;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 /**
@@ -54,7 +53,7 @@ class OrderController extends Controller
     public function store(Request $request)
     {
         $attributes = $this->validate($request, [
-            'type' => 'required|in:采购,销售,邮费,满减',
+            'type' => 'required|in:采购,销售,邮费,满减,损耗',
             'total' => 'required|money',
             'discount' => 'required|integer',
             'date' => 'required|date',

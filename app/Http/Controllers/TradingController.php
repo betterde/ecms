@@ -84,6 +84,7 @@ class TradingController extends Controller
             $trading = new Trading($attributes);
             $trading->order->total += $attributes['total'];
             $trading->saveOrFail();
+
             if ($trading->order->type == '采购') {
                 Pricing::create([
                     'trading_id' => $trading->id,
@@ -94,7 +95,7 @@ class TradingController extends Controller
                 ]);
                 $trading->commodity->amount += $attributes['amount'];
                 $trading->order->cost += $attributes['amount'] * $attributes['price'];
-            } elseif ($trading->order->type == '销售') {
+            } elseif (in_array($trading->order->type, ['销售', '损耗'])) {
                 $commodity = Commodity::find($attributes['commodity_id']);
                 if ($commodity->amount < $attributes['amount']) {
                     return failed(sprintf('商品 %s 的库存仅剩 %d', $commodity->name, $commodity->amount), 422);
@@ -130,10 +131,17 @@ class TradingController extends Controller
                 }
                 $trading->commodity->amount -= $attributes['amount'];
             }
-            $trading->order->actual += ($attributes['amount'] * $attributes['price']) * ($trading->order->discount / 100);
-            $trading->order->profit = $trading->order->actual - $trading->order->cost;
-            $trading->commodity->saveOrFail();
-            $trading->order->saveOrFail();
+
+            if ($trading->order->type == '损耗') {
+                $trading->commodity->saveOrFail();
+                $trading->order->saveOrFail();
+            } else {
+                $trading->order->actual += ($attributes['amount'] * $attributes['price']) * ($trading->order->discount / 100);
+                $trading->order->profit = $trading->order->actual - $trading->order->cost;
+                $trading->commodity->saveOrFail();
+                $trading->order->saveOrFail();
+            }
+
             DB::commit();
             return stored($trading);
         } catch (Throwable $exception) {
@@ -171,7 +179,7 @@ class TradingController extends Controller
                 $pricing->delete();
                 $trading->order->actual -= ($trading->total / ($trading->order->discount / 100));
                 $trading->commodity->amount -= $trading->amount;
-            } elseif ($trading->order->type === '销售') {
+            } elseif (in_array($trading->order->type, ['销售', '损耗'])) {
                 $trading->order->total -= $trading->total;
                 /**
                  * @var Inventory[] $inventories
@@ -186,8 +194,11 @@ class TradingController extends Controller
                 }
 
                 $trading->order->cost -= $cost;
-                $trading->order->actual -= ($trading->total / ($trading->order->discount / 100));
-                $trading->order->profit = $trading->order->actual - $trading->order->cost;
+
+                if ($trading->order->type === '销售') {
+                    $trading->order->actual -= ($trading->total / ($trading->order->discount / 100));
+                    $trading->order->profit = $trading->order->actual - $trading->order->cost;
+                }
                 $trading->commodity->amount += $trading->amount;
             }
 
