@@ -58,6 +58,7 @@ class OrderController extends Controller
             'discount' => 'required|integer',
             'date' => 'required|date',
             'remark' => 'nullable|string',
+            'customer_id' => 'nullable|uuid'
         ]);
 
         if ($attributes['type'] === '邮费') {
