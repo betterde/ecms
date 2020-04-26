@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use Carbon\CarbonPeriod;
 use App\Models\Commodity;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -24,8 +25,6 @@ class DashboardController extends Controller
 
         $reduced = (float)Order::whereDate('date', date('Y-m-d'))->where('type', '满减')->sum('total');
 
-        $start = strtotime('-30 day');
-
         $summary = [
             'day' => Order::whereDate('date', date('Y-m-d'))->where('type', '销售')->count(),
             'month' => Order::whereBetween('date', [date('Y-m-01'), date('Y-m-t')])->where('type', '销售')->count(),
@@ -38,25 +37,27 @@ class DashboardController extends Controller
             'balance' => [],
             'tendency' => [],
         ];
-        $days = [];
 
-        while (count($days) <= 30) {
-            $start += 86400;
-            $days[] = date('Y-m-d', $start);
-        }
+        $start = strtotime('-30 day');
+        $startDate = date('Y-m-d 00:00:00', $start);
+        $endDate = date('Y-m-d 23:59:59');
+        $period = new CarbonPeriod(date('Y-m-d', $start), '1 day', date('Y-m-d'));
 
-        $dailyIncome = Order::selectRaw('date, sum(actual) as actual')->where('type', '销售')->groupBy('date')->limit(30)->get();
-        $dailyExpend = Order::selectRaw('date, sum(actual) as actual')->whereIn('type', ['采购', '邮费'])->groupBy('date')->limit(30)->get();
-        $dailyOrders = Order::selectRaw('date, count(id) as quantity')->where('type', '销售')->groupBy('date')->limit(30)->get();
+        $dailyIncome = Order::selectRaw('date, sum(actual) as actual, sum(profit) as profit')->where('type', '销售')->whereBetween('date', [$startDate, $endDate])->groupBy('date')->get();
+        $dailyExpend = Order::selectRaw('date, sum(actual) as actual')->whereIn('type', ['采购', '邮费'])->whereBetween('date', [$startDate, $endDate])->groupBy('date')->get();
+        $dailyOrders = Order::selectRaw('date, count(id) as quantity')->where('type', '销售')->whereBetween('date', [$startDate, $endDate])->groupBy('date')->get();
 
-        foreach ($days as $day) {
+        foreach ($period as $carbon) {
             $in = 0;
             $ex = 0;
+            $profit = 0;
             $quantity = 0;
+            $day = $carbon->format('Y-m-d');
 
             foreach ($dailyIncome as &$income) {
                 if ($day == $income->date) {
                     $in = $income->actual;
+                    $profit = $income->profit;
                     unset($income);
                 }
             }
@@ -65,6 +66,12 @@ class DashboardController extends Controller
                 'date' => substr($day, 5),
                 'type' => '收入',
                 'actual' => (float)$in,
+            ];
+
+            $summary['tendency'][] = [
+                'date' => substr($day, 5),
+                'type' => '利润',
+                'actual' => (float)$profit,
             ];
 
             foreach ($dailyExpend as &$expend) {
