@@ -30,6 +30,9 @@ Route::group(['middleware' => 'auth:users'], function () {
     Route::get('commodity/unit', 'CommodityController@unit');
     Route::apiResource('commodity', 'CommodityController');
     Route::apiResource('order', 'OrderController');
+    Route::post('profile/avatar', 'ProfileController@avatar');
+    Route::get('profile/{user}', 'ProfileController@show');
+    Route::put('profile/{user}', 'ProfileController@update');
 });
 
 //Route::middleware('auth:users,customer')->get('/user', function (Request $request) {
