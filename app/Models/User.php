@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Eloquent;
 use Illuminate\Support\Carbon;
+use App\Notifications\ResetPassword;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -72,18 +73,6 @@ class User extends Authenticatable implements MustVerifyEmail, JWTSubject
     ];
 
     /**
-     * Set user password
-     *
-     * Date: 2020/4/17
-     * @param $value
-     * @author George
-     */
-    public function setPasswordAttribute($value)
-    {
-        $this->attributes['password'] = bcrypt($value);
-    }
-
-    /**
      * Get the identifier that will be stored in the subject claim of the JWT.
      *
      * @return mixed
@@ -103,5 +92,15 @@ class User extends Authenticatable implements MustVerifyEmail, JWTSubject
         return [
             'guard' => 'users'
         ];
+    }
+
+    /**
+     * Date: 2020/4/26
+     * @param string $token
+     * @author George
+     */
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new ResetPassword($token));
     }
 }

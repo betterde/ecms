@@ -2,7 +2,11 @@
 
 namespace App\Http\Controllers\Auth;
 
+use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\RedirectResponse;
+use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\ResetsPasswords;
 
 class ResetPasswordController extends Controller
@@ -25,5 +29,17 @@ class ResetPasswordController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/home';
+    protected $redirectTo = RouteServiceProvider::HOME;
+
+    /**
+     * Get the response for a successful password reset.
+     *
+     * @param Request $request
+     * @param  string  $response
+     * @return RedirectResponse|JsonResponse
+     */
+    protected function sendResetResponse(Request $request, $response)
+    {
+        return message('密码重置成功！');
+    }
 }

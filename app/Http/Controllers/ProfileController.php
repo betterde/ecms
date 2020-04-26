@@ -8,6 +8,7 @@ use Illuminate\Validation\Rule;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
@@ -57,6 +58,8 @@ class ProfileController extends Controller
         if (empty($attributes)) {
             return message('请填写需要修改的内容', 422);
         }
+
+        $attributes['password'] = Hash::make($attributes['password']);
 
         $user->update($attributes);
         return updated($user);
