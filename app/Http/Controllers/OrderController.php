@@ -38,6 +38,10 @@ class OrderController extends Controller
             return $query->where('type', $type);
         });
 
+        $query->when($date = $request->get('date'), function (Builder $query, $date) {
+            return $query->whereDate('date', $date);
+        });
+
         $query->orderByDesc('id');
 
         return success($query->paginate($size));
