@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Auth;
 
 use App\Models\User;
 use App\Models\Customer;
+use Google_Client;
 use GuzzleHttp\Client;
 use Illuminate\Support\Arr;
+use Throwable;
 use Tymon\JWTAuth\JWTGuard;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -33,7 +35,7 @@ class AuthenticationController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:users,customer', ['except' => ['signin', 'applet']]);
+        $this->middleware('auth:users,customer', ['except' => ['signin', 'applet', 'issue']]);
     }
 
     /**
@@ -104,6 +106,63 @@ class AuthenticationController extends Controller
         }
 
         return failed('认证失败，用户名或密码不正确', 401);
+    }
+
+    /**
+     * Date: 2020/4/27
+     * @param Request $request
+     * @throws ValidationException
+     * @throws Throwable
+     * @author George
+     */
+    public function issue(Request $request)
+    {
+        $params = $this->validate($request, [
+            'access_token' => 'required',
+            'platform' => 'required'
+        ]);
+
+        switch ($params['platform']) {
+            case 'Google':
+                $client = new Google_Client(['client_id' => config('services.google.client_id')]);
+                $payload = $client->verifyIdToken($params['access_token']);
+                if ($payload) {
+                    /**
+                     * 根据用户凭证获取用户信息
+                     *
+                     * @var User|Customer $user
+                     */
+                    $user = User::where('email', $payload['email'])->first();
+                    if (is_null($user)) {
+                        return failed('用户信息不存在！');
+                    }
+                    if (is_null($user->union_id)) {
+                        $user->union_id = $payload['sub'];
+                        $user->saveOrFail();
+                    }
+
+                    try {
+                        if (!$token = $this->guard()->login($user)) {
+                            return failed('认证失败，用户名或密码不正确', 401);
+                        }
+                    } catch (JWTException $exception) {
+                        return internalError();
+                    }
+
+                    return success([
+                        'id' => $user->id,
+                        'name' => $user->name,
+                        'email' => $user->email,
+                        'access_token' => $token,
+                        'token_type' => 'Bearer',
+                        'expires_in' => config('jwt.ttl') * 60,
+                    ]);
+                } else {
+                    return failed('无效的用户凭证！');
+                }
+            default:
+                return failed('目前未接入该平台！');
+        }
     }
 
     /**

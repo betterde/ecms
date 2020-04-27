@@ -19,8 +19,13 @@ Route::group(['prefix' => 'auth', 'namespace' => 'Auth'], function () {
     Route::post('register', 'RegisterController@register')->name('auth.register');
     Route::get('email/verify/{id}', 'VerificationController@verify')->name('verification.verify');
     Route::post('email/resend', 'VerificationController@resend')->name('verification.resend');
+    Route::post('issue', 'AuthenticationController@issue');
     Route::post('password/email', 'ForgotPasswordController@send');
     Route::post('password/reset', 'ResetPasswordController@reset')->name('password.reset');
+});
+
+Route::group(['prefix' => 'system', 'namespace' => 'System'], function () {
+    Route::get('oauth/platform', 'PlatformController@status');
 });
 
 Route::group(['middleware' => 'auth:users'], function () {
