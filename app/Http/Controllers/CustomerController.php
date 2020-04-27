@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Order;
 use Exception;
 use Ramsey\Uuid\Uuid;
 use App\Models\Customer;
@@ -28,9 +27,6 @@ class CustomerController extends Controller
         $descend = (boolean)$request->post('descend', true);
         $query = Customer::query();
         $query->when($search = $request->get('search'), function (Builder $query, $search) {
-            /**
-             * @var Builder $query
-             */
             return $query->where('name', 'like', "%$search%");
         });
 

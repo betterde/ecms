@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -28,23 +29,24 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  * @property string|null $referrer
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Customer newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Customer newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Customer query()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Customer whereAddress($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Customer whereBalance($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Customer whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Customer whereEmail($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Customer whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Customer whereMobile($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Customer whereMunicipality($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Customer whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Customer wherePassword($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Customer wherePrefecture($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Customer whereProvince($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Customer whereReferrer($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Customer whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Customer whereVip($value)
+ * @method static Customer create(array $attributes = [])
+ * @method static Builder|Customer newModelQuery()
+ * @method static Builder|Customer newQuery()
+ * @method static Builder|Customer query()
+ * @method static Builder|Customer whereAddress($value)
+ * @method static Builder|Customer whereBalance($value)
+ * @method static Builder|Customer whereCreatedAt($value)
+ * @method static Builder|Customer whereEmail($value)
+ * @method static Builder|Customer whereId($value)
+ * @method static Builder|Customer whereMobile($value)
+ * @method static Builder|Customer whereMunicipality($value)
+ * @method static Builder|Customer whereName($value)
+ * @method static Builder|Customer wherePassword($value)
+ * @method static Builder|Customer wherePrefecture($value)
+ * @method static Builder|Customer whereProvince($value)
+ * @method static Builder|Customer whereReferrer($value)
+ * @method static Builder|Customer whereUpdatedAt($value)
+ * @method static Builder|Customer whereVip($value)
  * @mixin \Eloquent
  */
 class Customer extends Authenticatable implements JWTSubject

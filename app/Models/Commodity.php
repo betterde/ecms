@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @author George
  * @package App\Models
  * @property Pricing[] $pricings
+ * @method static Commodity create(array $attributes = [])
  * @mixin Eloquent
  */
 class Commodity extends Model

@@ -49,7 +49,7 @@ class ProfileController extends Controller
             'password' => 'nullable'
         ]);
 
-        foreach ($attributes as $index => &$attribute) {
+        foreach ($attributes as $index => $attribute) {
             if (is_null($attribute) || empty($attribute)) {
                 unset($attributes[$index]);
             }

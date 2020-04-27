@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @author George
  * @package App\Models
  * @property Pricing|null $pricing
+ * @method static Inventory create(array $attributes = [])
  * @mixin Eloquent
  */
 class Inventory extends Model

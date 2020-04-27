@@ -5,12 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Order;
 use Carbon\CarbonPeriod;
 use App\Models\Commodity;
-use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class DashboardController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
         $inventory_cost = 0;
         $commodities = Commodity::with(['pricings' => function(HasMany $query) {
@@ -54,7 +53,7 @@ class DashboardController extends Controller
             $quantity = 0;
             $day = $carbon->format('Y-m-d');
 
-            foreach ($dailyIncome as &$income) {
+            foreach ($dailyIncome as $income) {
                 if ($day == $income->date) {
                     $in = $income->actual;
                     $profit = $income->profit;
@@ -74,7 +73,7 @@ class DashboardController extends Controller
                 'actual' => (float)$profit,
             ];
 
-            foreach ($dailyExpend as &$expend) {
+            foreach ($dailyExpend as $expend) {
                 if ($day == $expend->date) {
                     $ex = $expend->actual;
                     unset($expend);
@@ -87,7 +86,7 @@ class DashboardController extends Controller
                 'actual' => (float)$ex,
             ];
 
-            foreach ($dailyOrders as &$order) {
+            foreach ($dailyOrders as $order) {
                 if ($day == $order->date) {
                     $quantity = $order->quantity;
                     unset($order);

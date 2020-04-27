@@ -4,13 +4,15 @@ namespace App\Models;
 
 use Eloquent;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 
 /**
  * App\Models\Pricing
  *
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Pricing newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Pricing newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Pricing query()
+ * @method static Pricing create(array $attributes = [])
+ * @method static Builder|Pricing newModelQuery()
+ * @method static Builder|Pricing newQuery()
+ * @method static Builder|Pricing query()
  * @mixin Eloquent
  */
 class Pricing extends Model

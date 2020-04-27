@@ -31,10 +31,12 @@ class OrderController extends Controller
     {
         $size = $request->get('size', 15);
         $query = Order::query();
+
+        $query->when($search = $request->get('search'), function (Builder $query, $search) {
+            return $query->where('remark', 'like', "%$search%");
+        });
+
         $query->when($type = $request->get('type'), function (Builder $query, $type) {
-            /**
-             * @var Builder $query
-             */
             return $query->where('type', $type);
         });
 

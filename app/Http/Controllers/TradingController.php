@@ -42,9 +42,6 @@ class TradingController extends Controller
         ]);
 
         $query->when($type = $request->get('type'), function (Builder $query, $type) {
-            /**
-             * @var Builder $query
-             */
             return $query->where('type', $type);
         });
 

@@ -27,6 +27,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string $remark 备注
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ * @method static Order create(array $attributes = [])
  * @method static Builder|Order newModelQuery()
  * @method static Builder|Order newQuery()
  * @method static Builder|Order query()

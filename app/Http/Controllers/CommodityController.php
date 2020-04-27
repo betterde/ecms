@@ -33,9 +33,6 @@ class CommodityController extends Controller
         $query = Commodity::query();
 
         $query->when($search = $request->get('search'), function (Builder $query, $search) {
-            /**
-             * @var Builder $query
-             */
             return $query->where('name', 'like', "%$search%")
                 ->orWhere('brand', 'like', "%$search%")
                 ->orWhere('category', 'like', "%$search%");
@@ -56,27 +53,16 @@ class CommodityController extends Controller
             case 'table':
             default:
                 $query->when($brand = $request->get('brand'), function (Builder $query, $brand) {
-                    /**
-                     * @var Builder $query
-                     */
                     return $query->where('brand', $brand);
                 });
 
                 $query->when($category = $request->get('category'), function (Builder $query, $category) {
-                    /**
-                     * @var Builder $query
-                     */
                     return $query->where('category', $category);
                 });
 
-
                 $query->when($request->get('zero') === 'true', function (Builder $query) {
-                    /**
-                     * @var Builder $query
-                     */
                     return $query->where('amount', 0);
                 });
-
 
                 if ($descend) {
                     $query->orderByDesc($sort);

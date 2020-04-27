@@ -21,6 +21,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property Order|null $order 商品信息模型
  * @property Commodity|null $commodity 商品信息模型
  * @property Inventory[]|null $inventories
+ * @method static Trading create(array $attributes = [])
  * @method static Builder|Trading newModelQuery()
  * @method static Builder|Trading newQuery()
  * @method static Builder|Trading query()
