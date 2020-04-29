@@ -5,6 +5,7 @@
     <img src="https://res.cloudinary.com/betterde/image/upload/v1588045796/github/projects/ecms/dashboard.png" width="100%">
 </p>
 
+![ECMS](https://github.com/betterde/ecms/workflows/ECMS/badge.svg)
 
 ## ECMS
 
