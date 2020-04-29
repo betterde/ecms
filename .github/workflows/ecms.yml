@@ -8,7 +8,7 @@ on:
 
 jobs:
   test:
-    name: Testing project
+    name: Testing
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -30,7 +30,7 @@ jobs:
         DB_DATABASE: database/database.sqlite
       run: php artisan test
   deploy:
-    name: Deployment to production server
+    name: Deployment
     runs-on: ubuntu-latest
     steps:
       - name: deploy to production server via ssh
