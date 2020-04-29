@@ -42,4 +42,4 @@ jobs:
           port: ${{ secrets.PORT }}
           script: |
             cd ${{ secrets.PATH }}
-            git pull
+            git pull origin master
