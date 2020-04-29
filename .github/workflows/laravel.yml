@@ -7,10 +7,9 @@ on:
     branches: [ master ]
 
 jobs:
-  laravel-tests:
-
+  test:
+    name: Testing project
     runs-on: ubuntu-latest
-    
     steps:
     - uses: actions/checkout@v2
     - name: Copy .env
@@ -29,4 +28,18 @@ jobs:
       env:
         DB_CONNECTION: sqlite
         DB_DATABASE: database/database.sqlite
-      run: vendor/bin/phpunit
+      run: php artisan test
+  deploy:
+    name: Deployment to production server
+    runs-on: ubuntu-latest
+    steps:
+      - name: deploy to production server via ssh
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          port: ${{ secrets.PORT }}
+          script: |
+            cd ${{ secrets.PATH }}
+            git pull
