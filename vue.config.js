@@ -5,9 +5,9 @@ module.exports = {
   pages: {
     index: {
       entry: "spa/src/entries/index.js",
-      template: 'public/index.html',
+      template: 'spa/public/index.html',
       filename: 'index.html',
-      title: 'Index Page',
+      title: 'ECMS',
       chunks: ['chunk-vendors', 'chunk-common', 'index']
     }
   },
