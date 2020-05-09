@@ -1,0 +1,4 @@
+export const SET_LAYOUT_CURRENT = 'SET_LAYOUT_CURRENT';
+
+export const SET_PROFILE = 'SET_PROFILE';
+export const SET_ACCESS_TOKEN = 'SET_ACCESS_TOKEN';

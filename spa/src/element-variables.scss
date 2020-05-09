@@ -1,0 +1,129 @@
+/*
+Write your variables here. All available variables can be
+found in element-ui/packages/theme-chalk/src/common/var.scss.
+For example, to overwrite the theme color:
+*/
+
+/* icon font path, required */
+$--font-path: '~element-ui/lib/theme-chalk/fonts';
+
+@import "~element-ui/packages/theme-chalk/src/index";
+@import "./assets/styles/global";
+
+.card {
+  width: 100%;
+  padding: 40px 40px;
+  color: #909399;
+  background: white;
+  border-radius: 4px;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  .card_body {
+    text-align: center;
+    .number {
+      color: #5f6268;
+      font-size: 64px;
+    }
+  }
+  .card_footer {
+    text-align: center;
+  }
+}
+
+@media screen and (max-width: 734px) and (min-width: 0px) {
+  #app .el-menu-nav {
+    display: none;
+  }
+  .card {
+    margin: 10px 0;
+  }
+}
+
+@media only screen and (max-width: 1440px) {
+  .card {
+    .card_body {
+      .number {
+        font-size: 48px;
+      }
+    }
+  }
+}
+
+@media only screen and (max-width: 1280px) {
+  .card {
+    padding: 5px 5px;
+    .card_body {
+      .number {
+        font-size: 32px;
+      }
+    }
+  }
+}
+
+@media (min-width: 320px) and (max-width: 767px) {
+  .card {
+    padding: 5px 5px;
+    .card_body {
+      .number {
+        font-size: 32px;
+      }
+    }
+  }
+  .el-col-offset-2 {
+    margin-left: auto;
+  }
+}
+
+@media only screen and (max-height: 900px) {
+  .card {
+    padding: 20px 0;
+  }
+}
+
+.main-content {
+  .panel {
+    height: 100%;
+
+    .panel-header {
+      padding: 20px;
+      min-height: 60px;
+      background-color: #FFFFFF;
+      border-radius: 4px;
+      box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+      .panel-tools {
+        text-align: left;
+      }
+    }
+
+    .panel-body {
+      padding: 20px;
+      margin: 20px 0;
+      background-color: #FFFFFF;
+      border-radius: 4px;
+      box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+      .pagination {
+        margin-top: 20px;
+        text-align: center;
+      }
+    }
+    .panel-footer {
+      margin: 20px 0;
+      padding: 20px;
+      background-color: #FFFFFF;
+      border-radius: 4px;
+      box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  .table-expand {
+    font-size: 0;
+    label {
+      width: 80px;
+      color: #99a9bf;
+    }
+    .el-form-item {
+      margin-right: 0;
+      margin-bottom: 0;
+      width: 100%;
+    }
+  }
+}
