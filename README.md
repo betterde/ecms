@@ -162,6 +162,14 @@ server {
 ```
 > 这个配置文件是基于 Docker 部署的，如果直接在服务器上部署，可以将f `astcgi_pass` 修改为响应的 PHP-FPM 监听地址或 unxi
 
+## Swagger
+
+YAML 文件存放在 `public/swagger/{version}.yaml`，访问 URI: /swagger/{version}。 
+
+> 这里我并没有采用在控制器里写注释，而是直接将 API 写在 YAML 文件中。避免 Controller 过于冗长。
+
+你也在 `RouteServiceProvider` 取消注册 swagger 的路由，来关闭该功能。
+
 ## 赞助商
 
 [![jetbrains](https://res.cloudinary.com/betterde/image/upload/v1588046151/github/sponsor/jetbrains.svg)](https://www.jetbrains.com/?from=ecms)
