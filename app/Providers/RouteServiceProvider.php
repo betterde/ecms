@@ -41,6 +41,7 @@ class RouteServiceProvider extends ServiceProvider
     public function map()
     {
         $this->mapApiRoutes();
+        $this->mapSwaagerRouters();
         $this->mapWebRoutes();
     }
 
@@ -59,8 +60,21 @@ class RouteServiceProvider extends ServiceProvider
              ->group(base_path('routes/api.php'));
     }
 
+    /**
+     * Date: 2020/5/11
+     * @author George
+     */
     protected function mapWebRoutes()
     {
         Route::namespace($this->namespace)->group(base_path('routes/web.php'));
+    }
+
+    /**
+     * Date: 2020/5/11
+     * @author George
+     */
+    protected function mapSwaagerRouters()
+    {
+        Route::namespace($this->namespace)->group(base_path('routes/swagger.php'));
     }
 }

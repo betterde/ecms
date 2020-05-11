@@ -1,0 +1,91 @@
+swagger: "2.0"
+info:
+  title: ECMS
+  description: ECMS API documents
+  version: 1.0.0
+  license:
+    name: MIT
+    url: https://github.com/betterde/ecms/blob/master/LICENSE
+host: ecms.betterde.com
+schemes:
+  - http
+  - https
+tags:
+  - name: Order
+    description: Order API
+  - name: User
+    description: User API
+paths:
+  /user:
+    get:
+      tags:
+        - User
+      summary: Returns a list of users.
+      description: Optional extended description in Markdown.
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+  /order:
+    get:
+      tags:
+        - Order
+      summary: Returns a list of orders.
+      description: Optional extended description in Markdown.
+      produces:
+        - application/json
+      parameters:
+        - name: date
+          in: query
+          required: false
+          type: string
+          description: Date string
+      responses:
+        200:
+          schema:
+            $ref: '#/definitions/Orders'
+          description: Success
+definitions:
+  Order:
+    required:
+      - id
+    properties:
+      id:
+        type: integer
+      type:
+        type: string
+      total:
+        type: number
+      discount:
+        type: number
+      actual:
+        type: number
+      cost:
+        type: number
+      profit:
+        type: number
+      date:
+        type: string
+      customer_id:
+        type: string
+      remark:
+        type: string
+  Orders:
+    type: array
+    items:
+      $ref: '#/definitions/Order'
+  User:
+    required:
+      - id
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      email:
+        type: string
+
+responses:
+  Success:
+    description: Success response
