@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Carbon;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -98,5 +99,15 @@ class Customer extends Authenticatable implements JWTSubject
         return [
             'guard' => 'customer'
         ];
+    }
+
+    /**
+     * Date: 2020/5/11
+     * @return MorphMany
+     * @author George
+     */
+    public function invitations()
+    {
+        return $this->morphMany(Invitation::class, 'initiator');
     }
 }
