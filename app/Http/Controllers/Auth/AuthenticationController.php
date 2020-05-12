@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Models\User;
-use App\Models\Customer;
-use Google_Client;
-use GuzzleHttp\Client;
-use Illuminate\Support\Arr;
 use Throwable;
+use Google_Client;
+use App\Models\User;
+use GuzzleHttp\Client;
+use App\Models\Customer;
 use Tymon\JWTAuth\JWTGuard;
+use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
@@ -60,7 +60,8 @@ class AuthenticationController extends Controller
 
         $guard = $request->get('guard', $this->guard());
 
-        $credentials[$this->username()] = Arr::pull($credentials, 'username');
+        $username = Arr::pull($credentials, 'username');
+        $credentials[$this->username($username)] = $username;
 
         if ($guard == 'customer') {
             $provider = new EloquentUserProvider($hasher, Customer::class);
@@ -89,6 +90,7 @@ class AuthenticationController extends Controller
                     'id' => $user->id,
                     'name' => $user->name,
                     'mobile' => $user->mobile,
+                    'user_type' => 'customer',
                     'access_token' => $token,
                     'token_type' => 'Bearer',
                     'expires_in' => config('jwt.ttl') * 60,
@@ -99,6 +101,7 @@ class AuthenticationController extends Controller
                 'id' => $user->id,
                 'name' => $user->name,
                 'email' => $user->email,
+                'user_type' => 'user',
                 'access_token' => $token,
                 'token_type' => 'Bearer',
                 'expires_in' => config('jwt.ttl') * 60,
@@ -111,6 +114,7 @@ class AuthenticationController extends Controller
     /**
      * Date: 2020/4/27
      * @param Request $request
+     * @return JsonResponse
      * @throws ValidationException
      * @throws Throwable
      * @author George
@@ -209,6 +213,7 @@ class AuthenticationController extends Controller
     public function profile(Request $request)
     {
         $user = $request->user();
+        $user instanceof User ? $user->type = 'user' : $user->type = 'customer';
         return success($user);
     }
 
@@ -226,26 +231,19 @@ class AuthenticationController extends Controller
     }
 
     /**
-     * Get the needed authorization credentials from the request.
-     *
-     * @param  Request  $request
-     * @return array
-     */
-    protected function credentials(Request $request)
-    {
-        return $request->only($this->username(), 'password');
-    }
-
-    /**
      * 获取用户凭证字段
      *
      * Date: 2018/9/9
-     * @author George
+     * @param string $useranme
      * @return string
+     * @author George
      */
-    public function username()
+    public function username(string $useranme)
     {
-        return 'email';
+        if (filter_var($useranme, FILTER_VALIDATE_EMAIL) !== false) {
+            return 'email';
+        }
+        return 'mobile';
     }
 
     /**

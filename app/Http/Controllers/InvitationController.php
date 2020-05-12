@@ -50,8 +50,11 @@ class InvitationController extends Controller
         $attributes['initiator_id'] = $user->id;
         $attributes['initiator_type'] = Str::lower(class_basename($model));
         $expires = now()->addMinutes($attributes['expires']);
-        $url = URL::temporarySignedRoute('signtest', $expires, ['account' => $attributes['account']]);
-        dd($url);
+        $url = URL::temporarySignedRoute('auth.register', $expires, [
+            'account' => $attributes['account'],
+            'initiator' => $attributes['initiator_id'],
+            'initiator_type' => $attributes['initiator_type']
+        ], false);
         $attributes['expires'] = $expires->getTimestamp();
         $attributes['signature'] = Str::afterLast($url, 'signature=');
         $invitation = Invitation::create($attributes);

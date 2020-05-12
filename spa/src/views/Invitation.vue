@@ -279,7 +279,7 @@
       generateRegisterLink(invitation) {
         let date = new Date(invitation.expires);
         let timestamp = date.getTime() / 1000;
-        let url = `${window.location.protocol}//${window.location.host}/register?account=${invitation.account}&expires=${timestamp}&signature=${invitation.signature}`;
+        let url = `${window.location.protocol}//${window.location.host}/register?account=${invitation.account}&expires=${timestamp}&initiator=${invitation.initiator_id}&initiator_type=${invitation.initiator_type}&signature=${invitation.signature}`;
         let result = copy(url);
         if (result) {
           this.$message.success({

@@ -7,8 +7,7 @@ let profile = {
   name: '',
   email: '',
   avatar: '',
-  team_id: 0,
-  manager: false
+  type: false
 };
 
 let str = localStorage.getItem('profile');
@@ -31,8 +30,7 @@ export default {
           name: '',
           email: '',
           avatar: '',
-          team_id: 0,
-          manager: false
+          type: ''
         });
         localStorage.removeItem('profile')
       } else {
@@ -41,8 +39,7 @@ export default {
           name: data.name,
           email: data.email,
           avatar: data.avatar,
-          team_id: data.team_id,
-          manager: data.manager
+          type: data.type
         };
         Vue.set(state, 'profile', profile);
         localStorage.setItem('profile', global.JSON.stringify(profile))
@@ -72,7 +69,7 @@ export default {
     register({ commit }, payload) {
       return new Promise((resolve, reject) => {
         api.account.register(payload.query, payload.params).then(res => {
-          commit(type.SET_ACCESS_TOKEN, res.data);
+          commit(types.SET_ACCESS_TOKEN, res.data);
           resolve(res);
         }).catch(err => {
           reject(err);
