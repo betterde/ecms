@@ -33,6 +33,7 @@ class CreateCustomersTable extends Migration
             $table->string('prefecture')->nullable()->comment('县');
             $table->string('address')->nullable()->comment('地址');
             $table->uuid('referrer')->nullable()->comment('推荐人');
+            $table->string('referrer_type')->nullable()->comment('推荐人所属用户组');
             $table->string('remark')->nullable()->comment('备注');
             $table->timestamps();
         });
