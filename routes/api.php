@@ -28,7 +28,7 @@ Route::group(['prefix' => 'system', 'namespace' => 'System'], function () {
     Route::get('oauth/platform', 'PlatformController@status');
 });
 
-Route::group(['middleware' => 'auth:users'], function () {
+Route::group(['middleware' => 'auth:users,customer'], function () {
     Route::get('dashboard', 'DashboardController@index');
     Route::apiResource('trading', 'TradingController')->except('update');
     Route::apiResource('customer', 'CustomerController');
@@ -40,6 +40,7 @@ Route::group(['middleware' => 'auth:users'], function () {
     Route::post('profile/avatar', 'ProfileController@avatar');
     Route::get('profile/{user}', 'ProfileController@show');
     Route::put('profile/{user}', 'ProfileController@update');
+    Route::apiResource('invitation', 'InvitationController')->except('update');
 });
 
 //Route::middleware('auth:users,customer')->get('/user', function (Request $request) {

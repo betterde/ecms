@@ -245,7 +245,7 @@
         meta: {
           total: 0,
           page_sizes: [10, 20, 50]
-        },
+        }
       }
     },
     methods: {
