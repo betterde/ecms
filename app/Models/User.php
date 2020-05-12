@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Eloquent;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Carbon;
 use App\Notifications\ResetPassword;
 use Tymon\JWTAuth\Contracts\JWTSubject;
@@ -17,7 +18,7 @@ use Illuminate\Notifications\DatabaseNotificationCollection;
  *
  * @author George
  * @package App\Models
- * @property int $id
+ * @property string $id
  * @property string $name
  * @property string $email
  * @property Carbon|null $email_verified_at
@@ -42,6 +43,11 @@ use Illuminate\Notifications\DatabaseNotificationCollection;
 class User extends Authenticatable implements MustVerifyEmail, JWTSubject
 {
     use Notifiable, \Illuminate\Auth\MustVerifyEmail;
+
+    /**
+     * @var bool $incrementing
+     */
+    public $incrementing = false;
 
     /**
      * @var null $rememberTokenName
@@ -105,5 +111,15 @@ class User extends Authenticatable implements MustVerifyEmail, JWTSubject
     public function sendPasswordResetNotification($token)
     {
         $this->notify(new ResetPassword($token));
+    }
+
+    /**
+     * Date: 2020/5/11
+     * @return MorphMany
+     * @author George
+     */
+    public function invitations()
+    {
+        return $this->morphMany(Invitation::class, 'initiator');
     }
 }
