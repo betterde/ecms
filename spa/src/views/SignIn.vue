@@ -10,10 +10,10 @@
             <el-input v-model="credentials.username" autocomplete="off" placeholder="邮箱"></el-input>
           </el-form-item>
           <el-form-item prop="password">
-            <el-input type="password" v-model="credentials.password" @keyup.enter.native="submit('signin')" placeholder="密码" show-password></el-input>
+            <el-input type="password" v-model="credentials.password" @keyup.enter.native="submit" placeholder="密码" show-password></el-input>
           </el-form-item>
           <el-form-item class="login-button">
-            <el-button type="primary" plain class="pull-right" style="width: 100%" @click="submit('signin')" :loading="loading">登录</el-button>
+            <el-button type="primary" plain class="pull-right" style="width: 100%" @click="submit" :loading="loading">登录</el-button>
           </el-form-item>
           <el-form-item>
             <div id="sign-in-with-google" style="text-align: center"></div>
@@ -47,19 +47,21 @@
           password: [
             {required: true, message: '请输入密码', trigger: 'blur'},
           ]
-        },
+        }
       }
     },
     methods: {
-      submit(name) {
-        this.$refs[name].validate((valid) => {
+      submit() {
+        this.$refs.signin.validate(valid => {
           if (valid) {
             this.loading = true;
             store.dispatch('signIn', this.credentials).then(() => {
               store.dispatch("fetchProfile").then(() => {
+                this.loading = false;
                 this.$router.replace('/');
               });
             }).catch(err => {
+              this.loading = false;
               if (err.hasOwnProperty('exception')) {
                 this.$message.error(`${err.exception}: ${err.message}`);
               } else {
@@ -70,7 +72,6 @@
             return false;
           }
         });
-        this.loading = false;
       },
       initGoogleAPI() {
         // eslint-disable-next-line
