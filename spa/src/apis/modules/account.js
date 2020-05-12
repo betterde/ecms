@@ -2,9 +2,7 @@ import Vue from 'vue'
 
 export default {
   register(query, params) {
-    return Vue.axios.post('/api/auth/register', params, {
-      params: query
-    });
+    return Vue.axios.post(`/api/auth/register?account=${query.account}&expires=${query.expires}&initiator=${query.initiator}&initiator_type=${query.initiator_type}&signature=${query.signature}`, params);
   },
   forgot(params) {
     return Vue.axios.post('/api/auth/password/email', params);
