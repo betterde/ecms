@@ -6,6 +6,12 @@
       </div>
       <div class="panel-body">
         <el-form :model="credentials" :rules="rules" ref="signin">
+          <el-form-item>
+            <el-select style="width: 100%" v-model="credentials.guard" placeholder="请选择您的用户类型">
+              <el-option label="管理员" value="user"></el-option>
+              <el-option label="高级会员" value="customer"></el-option>
+            </el-select>
+          </el-form-item>
           <el-form-item prop="username">
             <el-input v-model="credentials.username" autocomplete="off" placeholder="邮箱"></el-input>
           </el-form-item>
@@ -28,8 +34,9 @@
 </template>
 
 <script>
-  import api from '../apis';
-  import store from '../store';
+  import api from '../../../apis';
+  import store from '../../../store';
+  import register from "../../../router/register";
 
   export default {
     name: "SignIn",
@@ -37,8 +44,9 @@
       return {
         loading: false,
         credentials: {
-          username: '',
-          password: ''
+          guard: 'customer',
+          username: 'george@betterde.com',
+          password: 'George@1994'
         },
         rules: {
           username: [
@@ -56,8 +64,9 @@
           if (valid) {
             this.loading = true;
             store.dispatch('signIn', this.credentials).then(() => {
-              store.dispatch("fetchProfile").then(() => {
+              store.dispatch("fetchProfile").then(res => {
                 this.loading = false;
+                this.$router.addRoutes(register(res.data.type));
                 this.$router.replace('/');
               });
             }).catch(err => {

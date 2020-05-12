@@ -18,7 +18,7 @@
   </div>
 </template>
 <script>
-  import router from '../router'
+  import router from '../../../router'
   import { mapState } from 'vuex'
 
   export default{
@@ -46,7 +46,6 @@
       }
     },
     mounted () {
-      this.$store.commit("SET_LAYOUT_CURRENT", 'guest');
       /**
        * 设置定时器
        */
