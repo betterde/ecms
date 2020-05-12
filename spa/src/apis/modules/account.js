@@ -1,6 +1,11 @@
 import Vue from 'vue'
 
 export default {
+  register(query, params) {
+    return Vue.axios.post('/api/auth/register', params, {
+      params: query
+    });
+  },
   forgot(params) {
     return Vue.axios.post('/api/auth/password/email', params);
   },

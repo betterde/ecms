@@ -76,6 +76,22 @@ const router = new Router({
       ]
     },
     {
+      path: '/invitation',
+      name: 'invitation',
+      meta: {
+        requiresAuth: true
+      },
+      component: () => import('../views/Invitation.vue')
+    },
+    {
+      path: '/register',
+      name: 'register',
+      meta: {
+        requiresAuth: false
+      },
+      component: () => import('../views/Register.vue')
+    },
+    {
       path: '/signin',
       name: 'signin',
       meta: {

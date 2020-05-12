@@ -63,6 +63,28 @@ export default {
     }
   },
   actions: {
+    /**
+     * Register user request
+     * @param commit
+     * @param payload
+     * @returns {Promise<unknown>}
+     */
+    register({ commit }, payload) {
+      return new Promise((resolve, reject) => {
+        api.account.register(payload.query, payload.params).then(res => {
+          commit(type.SET_ACCESS_TOKEN, res.data);
+          resolve(res);
+        }).catch(err => {
+          reject(err);
+        });
+      });
+    },
+    /**
+     * Sign in request
+     * @param commit
+     * @param params
+     * @returns {Promise<unknown>}
+     */
     signIn({ commit }, params) {
       return new Promise((resolve, reject) => {
         api.account.signin(params).then(res => {
