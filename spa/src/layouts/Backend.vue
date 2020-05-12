@@ -66,7 +66,8 @@
         this.$store.commit('SET_ACCESS_TOKEN', false);
         this.$store.commit('SET_PROFILE', false);
         this.$message.success('注销成功');
-        this.$router.push("/signin");
+        // 这里用原生页面跳转而不是 this.$router.push("/signin"), 避免再次登录重复添加路由
+        window.location.href = '/signin';
       }
     },
     computed: {
