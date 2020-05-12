@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import store from '../store'
 import Router from 'vue-router'
+import register from "./register";
 
 Vue.use(Router);
 
@@ -9,123 +10,114 @@ Router.prototype.push = function push(location) {
   return originalPush.call(this, location).catch(err => err)
 };
 
+const routes = [
+  {
+    path: '/commodity',
+    name: 'commodity',
+    meta: {
+      requiresAuth: true,
+      rules: ['user']
+    },
+    component: () => import('../views/commodity/Index.vue'),
+    children: [
+      {
+        path: ':id/detail',
+        name: 'commodityDetail',
+        meta: {
+          requiresAuth: true,
+          rules: ['user']
+        },
+        component: () => import('../views/commodity/Detail.vue')
+      }
+    ]
+  },
+  {
+    path: '/customer',
+    name: 'customer',
+    meta: {
+      requiresAuth: true,
+      rules: ['user', 'customer']
+    },
+    component: () => import('../views/customer/Index.vue'),
+    children: [
+      {
+        path: ':id/detail',
+        name: 'customerDetail',
+        meta: {
+          requiresAuth: true,
+          rules: ['user', 'customer']
+        },
+        component: () => import('../views/customer/Detail.vue')
+      }
+    ]
+  },
+  {
+    path: '/invitation',
+    name: 'invitation',
+    meta: {
+      requiresAuth: true,
+      rules: ['user', 'customer']
+    },
+    component: () => import('../views/Invitation.vue')
+  },
+  {
+    path: '/register',
+    name: 'register',
+    meta: {
+      rules: [],
+      requiresAuth: false
+    },
+    component: () => import('../views/rules/guest/Register.vue')
+  },
+  {
+    path: '/signin',
+    name: 'signin',
+    meta: {
+      rules: [],
+      requiresAuth: false
+    },
+    component: () => import('../views/rules/guest/SignIn.vue')
+  },
+  {
+    path: '/forgot',
+    name: 'forgot',
+    meta: {
+      rules: [],
+      requiresAuth: false
+    },
+    component: () => import('../views/rules/guest/ForgotPassword.vue')
+  },
+  {
+    path: '/reset',
+    name: 'reset',
+    meta: {
+      rules: [],
+      requiresAuth: false,
+    },
+    component: () => import('../views/rules/guest/ResetPassword.vue')
+  },
+  {
+    // 会匹配所有路径
+    path: '*',
+    name: 'notfound',
+    meta: {
+      rules: [],
+      requiresAuth: false
+    },
+    component: () => import('../views/rules/guest/NotFound.vue')
+  }
+];
+
 const router = new Router({
   mode: 'history',
   base: process.env.BASE_URL,
-  routes: [
-    {
-      path: '/',
-      name: 'dashboard',
-      meta: {
-        requiresAuth: true
-      },
-      component: () => import('../views/Dashboard.vue')
-    },
-    {
-      path: "/order",
-      name: "order",
-      meta: {
-        requiresAuth: true
-      },
-      component: () => import('../views/order/Index.vue'),
-      children: [
-        {
-          path: ':id/detail',
-          name: "orderDetail",
-          meta: {
-            requiresAuth: true
-          },
-          component: () => import('../views/order/Detail.vue')
-        }
-      ]
-    },
-    {
-      path: '/commodity',
-      name: 'commodity',
-      meta: {
-        requiresAuth: true
-      },
-      component: () => import('../views/commodity/Index.vue'),
-      children: [
-        {
-          path: ':id/detail',
-          name: 'commodityDetail',
-          meta: {
-            requiresAuth: true,
-          },
-          component: () => import('../views/commodity/Detail.vue')
-        }
-      ]
-    },
-    {
-      path: '/customer',
-      name: 'customer',
-      meta: {
-        requiresAuth: true
-      },
-      component: () => import('../views/customer/Index.vue'),
-      children: [
-        {
-          path: ':id/detail',
-          name: 'customerDetail',
-          meta: {
-            requiresAuth: true,
-          },
-          component: () => import('../views/customer/Detail.vue')
-        }
-      ]
-    },
-    {
-      path: '/invitation',
-      name: 'invitation',
-      meta: {
-        requiresAuth: true
-      },
-      component: () => import('../views/Invitation.vue')
-    },
-    {
-      path: '/register',
-      name: 'register',
-      meta: {
-        requiresAuth: false
-      },
-      component: () => import('../views/Register.vue')
-    },
-    {
-      path: '/signin',
-      name: 'signin',
-      meta: {
-        requiresAuth: false
-      },
-      component: () => import('../views/SignIn.vue')
-    },
-    {
-      path: '/forgot',
-      name: 'forgot',
-      meta: {
-        requiresAuth: false
-      },
-      component: () => import('../views/ForgotPassword.vue')
-    },
-    {
-      path: '/reset',
-      name: 'reset',
-      meta: {
-        requiresAuth: false,
-      },
-      component: () => import('../views/ResetPassword.vue')
-    },
-    {
-      // 会匹配所有路径
-      path: '*',
-      name: 'notfound',
-      meta: {
-        requiresAuth: false
-      },
-      component: () => import('../views/NotFound.vue')
-    }
-  ]
+  routes: routes
 });
+
+if (store.state.account.access_token && store.state.account.profile.type) {
+  router.addRoutes(register(store.state.account.profile.type));
+}
+
 
 /**
  * Routing to intercept
@@ -157,7 +149,12 @@ router.beforeEach((to, from, next) => {
         path: '/signin'
       })
     } else {
-      next()
+      // 判断用户是否拥有指定角色
+      if (to.meta.rules.includes(store.state.account.profile.type)) {
+        next();
+      } else {
+        next('/order');
+      }
     }
   } else {
     next()
