@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use Closure;
 use Illuminate\Bus\Queueable;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Notifications\Notification;
@@ -22,14 +23,14 @@ class ResetPassword extends Notification
     /**
      * The callback that should be used to create the reset password URL.
      *
-     * @var \Closure|null
+     * @var Closure|null
      */
     public static $createUrlCallback;
 
     /**
      * The callback that should be used to build the mail message.
      *
-     * @var \Closure|null
+     * @var Closure|null
      */
     public static $toMailCallback;
 
@@ -87,7 +88,7 @@ class ResetPassword extends Notification
     /**
      * Set a callback that should be used when creating the reset password button URL.
      *
-     * @param  \Closure  $callback
+     * @param  Closure  $callback
      * @return void
      */
     public static function createUrlUsing($callback)
@@ -98,7 +99,7 @@ class ResetPassword extends Notification
     /**
      * Set a callback that should be used when building the notification mail message.
      *
-     * @param  \Closure  $callback
+     * @param  Closure  $callback
      * @return void
      */
     public static function toMailUsing($callback)
