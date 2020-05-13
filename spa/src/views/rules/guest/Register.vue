@@ -56,11 +56,10 @@
         },
         loading: false,
         credentials: {
-          name: 'George',
-          mobile: '',
-          email: 'george@betterde.com',
-          password: 'George@1994',
-          password_confirmation: 'George@1994'
+          name: '',
+          email: '',
+          password: '',
+          password_confirmation: ''
         },
         rules: {
           name: [
@@ -106,7 +105,7 @@
     mounted() {
       let query = this.$route.query;
       if (query.hasOwnProperty('initiator') && query.hasOwnProperty('account') && query.hasOwnProperty('expires') && query.hasOwnProperty('signature')) {
-        this.credentials.mobile = query.account;
+        this.credentials.email = query.account;
         this.query.account = query.account;
         this.query.expires = query.expires;
         this.query.signature = query.signature;
