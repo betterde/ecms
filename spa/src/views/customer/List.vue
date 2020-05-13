@@ -40,13 +40,16 @@
     <div class="panel-body" :class="classes">
       <el-table v-loading="loading" :data="customers" :default-sort="meta.sort" style="width: 100%" ref="pipeline">
         <el-table-column prop="name" label="姓名" width="100"></el-table-column>
-        <el-table-column prop="mobile" label="手机" width="200"></el-table-column>
+        <el-table-column prop="mobile" label="手机" width="140"></el-table-column>
         <el-table-column prop="balance" label="余额" width="80"></el-table-column>
         <el-table-column prop="vip" label="会员" width="50">
           <template slot-scope="scope">
             <el-tag v-if="scope.row.vip === 0" size="small" type="info">否</el-tag>
             <el-tag v-else size="small">是</el-tag>
           </template>
+        </el-table-column>
+        <el-table-column prop="vip" label="折扣" width="80">
+          <template slot-scope="scope"><span>{{discount(scope.row)}}</span></template>
         </el-table-column>
         <el-table-column prop="created_at" label="注册于"></el-table-column>
         <el-table-column prop="remark" label="备注"></el-table-column>
@@ -116,6 +119,18 @@
       }
     },
     methods: {
+      discount(row) {
+        if (row.discount === 100) {
+          return '无折扣';
+        }
+
+        let tensDigit = Math.floor(row.discount % 100 / 10);
+        let unitsDigit = Math.floor(row.discount % 10);
+        if (unitsDigit === 0) {
+          return `${tensDigit} 折`
+        }
+        return `${tensDigit}${unitsDigit} 折`
+      },
       changePage(page) {
         this.meta.page = page;
         this.params.page = page;

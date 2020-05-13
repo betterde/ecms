@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
+use DateTimeInterface;
 use Illuminate\Support\Carbon;
 use Tymon\JWTAuth\Contracts\JWTSubject;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 /**
@@ -52,6 +54,8 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  */
 class Customer extends Authenticatable implements JWTSubject
 {
+    use Notifiable;
+
     /**
      * @var string $primaryKey
      */
@@ -109,5 +113,16 @@ class Customer extends Authenticatable implements JWTSubject
     public function invitations()
     {
         return $this->morphMany(Invitation::class, 'initiator');
+    }
+
+    /**
+     * Date: 2020/5/12
+     * @param DateTimeInterface $dateTime
+     * @return string
+     * @author George
+     */
+    protected function serializeDate(DateTimeInterface $dateTime)
+    {
+        return $dateTime->format('Y-m-d H:i:s');
     }
 }

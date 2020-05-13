@@ -17,7 +17,6 @@ class CreateInvitationsTable extends Migration
             $table->id();
             $table->uuid('initiator_id')->index()->comment('发起人ID');
             $table->string('initiator_type')->comment('发起人类型: user,customer');
-            $table->string('mode')->comment('发送方式: mobile,email');
             $table->string('account')->unique()->comment('邮箱地址');
             $table->unsignedInteger('expires')->comment('有效期');
             $table->string('status')->default('unregistered')->comment('邀请状态: unregistered,registered');
