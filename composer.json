@@ -11,6 +11,7 @@
         "php": "^7.2",
         "ext-json": "*",
         "ext-pdo": "*",
+        "alibabacloud/client": "^1.5",
         "betterde/response": "^1.4",
         "dompdf/dompdf": "^0.8.5",
         "fideloper/proxy": "^4.2",
