@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
+use App\Models\Customer;
 use App\Models\Invitation;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\URL;
+use App\Notifications\RegisterInvitation;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Validation\ValidationException;
 
@@ -19,7 +23,11 @@ class InvitationController extends Controller
         $query->with('initiator');
 
         $query->when($initiator = $request->get('initiator'), function (Builder $query, $initiator) {
-            return $query->when('initiator_id', $initiator);
+            return $query->where('initiator_id', $initiator);
+        });
+
+        $query->when($status = $request->get('status'), function (Builder $query, $status) {
+            return $query->where('status', $status);
         });
 
         $query->when($account = $request->get('account'), function (Builder $query, $account) {
@@ -39,35 +47,52 @@ class InvitationController extends Controller
      */
     public function store(Request $request)
     {
-        $attributes = $this->validate($request, [
-            'mode' => 'required|in:mobile,email',
-            'account' => 'required',
-            'expires' => 'required|integer',
+        $validator = Validator::make($request->all(), [
+            'account' => ['required', 'email', 'unique:invitations']
         ]);
-
+        $attributes = $validator->validate();
         $user = $request->user();
         $model = get_class($user);
         $attributes['initiator_id'] = $user->id;
         $attributes['initiator_type'] = Str::lower(class_basename($model));
-        $expires = now()->addMinutes($attributes['expires']);
-        $url = URL::temporarySignedRoute('auth.register', $expires, [
+        $expires = now()->addMinutes(30);
+        $uri = URL::temporarySignedRoute('auth.register', $expires, [
             'account' => $attributes['account'],
             'initiator' => $attributes['initiator_id'],
             'initiator_type' => $attributes['initiator_type']
         ], false);
         $attributes['expires'] = $expires->getTimestamp();
-        $attributes['signature'] = Str::afterLast($url, 'signature=');
+        $attributes['signature'] = Str::afterLast($uri, 'signature=');
         $invitation = Invitation::create($attributes);
+        $customer = new Customer(['email' => $attributes['account']]);
+        $customer->notify(new RegisterInvitation([
+            'inviter' => $user->name,
+            'url' => url(str_replace('/api/auth', '', $uri))
+        ]));
         return success($invitation);
     }
 
-    public function show()
+    /**
+     * Date: 2020/5/12
+     * @param Invitation $invitation
+     * @return JsonResponse
+     * @author George
+     */
+    public function show(Invitation $invitation)
     {
-
+        return success($invitation);
     }
 
-    public function destroy()
+    /**
+     * Date: 2020/5/12
+     * @param Invitation $invitation
+     * @return JsonResponse
+     * @throws Exception
+     * @author George
+     */
+    public function destroy(Invitation $invitation)
     {
-
+        $invitation->delete();
+        return deleted();
     }
 }
