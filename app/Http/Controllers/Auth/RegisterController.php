@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers\Auth;
 
+use Throwable;
 use App\Models\Customer;
+use App\Models\Invitation;
 use Tymon\JWTAuth\JWTGuard;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -46,6 +50,13 @@ class RegisterController extends Controller
         $this->middleware('guest');
     }
 
+    /**
+     * Date: 2020/5/12
+     * @param Request $request
+     * @return JsonResponse|mixed
+     * @throws Throwable
+     * @author George
+     */
     public function register(Request $request)
     {
         if ($request->hasValidSignature(false) === false) {
@@ -67,7 +78,7 @@ class RegisterController extends Controller
         if ($response = $this->registered($request, $user)) {
             return $response;
         }
-        
+
         return stored([
             'id' => $user->id,
             'name' => $user->name,
@@ -99,21 +110,33 @@ class RegisterController extends Controller
     /**
      * Create a new user instance after a valid registration.
      *
-     * @param  array  $data
-     * @return Customer
+     * @param array $data
+     * @return Customer|null
+     * @throws Throwable
      */
     protected function create(array $data)
     {
-        $attributes = [
-            'id' => Str::uuid(),
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'mobile' => $data['email'],
-            'password' => Hash::make($data['password']),
-            'referrer' => $data['initiator'],
-            'referrer_type' => $data['initiator_type']
-        ];
-        return Customer::create($attributes);
+        try {
+            DB::beginTransaction();
+            $invitation = Invitation::where('signature', $data['signature'])->firstOrFail();
+            $attributes = [
+                'id' => Str::uuid(),
+                'name' => $data['name'],
+                'email' => $data['email'],
+                'mobile' => $data['mobile'],
+                'password' => Hash::make($data['password']),
+                'referrer' => $data['initiator'],
+                'referrer_type' => $data['initiator_type']
+            ];
+            $customer = Customer::create($attributes);
+            $invitation->status = 'registered';
+            $invitation->saveOrFail();
+            DB::commit();
+            return $customer;
+        } catch (Throwable $exception) {
+            DB::rollBack();
+            return null;
+        }
     }
 
     /**
