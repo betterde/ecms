@@ -11,5 +11,8 @@ export default {
   },
   fetchInvitation(id) {
     return Vue.axios.post(`/api/invitation/${id}`);
+  },
+  deleteInvitation(id) {
+    return Vue.axios.delete(`/api/invitation/${id}`);
   }
 }

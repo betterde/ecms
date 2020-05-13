@@ -9,12 +9,18 @@
                 <el-option v-for="customer in customers" :key="customer.id" :label="customer.name" :value="customer.id"></el-option>
               </el-select>
             </el-col>
+            <el-col :xs="12" :span="2">
+              <el-select v-model="params.status" @clear="handleClear" clearable placeholder="状态">
+                <el-option label="未注册" value="unregistered"></el-option>
+                <el-option label="已注册" value="registered"></el-option>
+              </el-select>
+            </el-col>
             <el-col :xs="24" :span="5">
               <el-input placeholder="输入手机或邮箱进行查找" v-model="params.account" @keyup.enter.native="fetchInvitations" @clear="handleClear" clearable>
                 <i slot="prefix" class="el-input__icon el-icon-user"></i>
               </el-input>
             </el-col>
-            <el-col :span="10">
+            <el-col :span="8">
               <el-button type="primary" icon="el-icon-search" @click="fetchInvitations" plain>搜索</el-button>
             </el-col>
             <el-col :xs="24" :span="6" style="text-align: right">
@@ -23,28 +29,11 @@
           </el-row>
         </div>
       </div>
-      <el-dialog title="发起邀请" :visible.sync="create.dialog" @close="handleClose('create')" width="600px" :close-on-click-modal="false">
+      <el-dialog title="发起邀请" :visible.sync="create.dialog" @close="handleClose('create')" width="400px" :close-on-click-modal="false">
         <el-form :model="create.params" :rules="create.rules" ref="create" label-position="top">
-          <el-row :gutter="10">
-            <el-col :span="12">
-              <el-form-item label="联系方式" prop="account">
-                <el-input v-model="create.params.account" autocomplete="off" placeholder="请输入名称"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="6">
-              <el-form-item label="发送方式" prop="mode">
-                <el-select style="width: 100%" v-model="create.params.mode" default-first-option allow-create clearable placeholder="请选择">
-                  <el-option label="短信" value="mobile"></el-option>
-                  <el-option label="邮件" value="email"></el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="6">
-              <el-form-item label="有效期" prop="expires">
-                <el-input-number id="expires" v-model="create.params.expires" :min="30" :max="480" :controls="false" placeholder="单位：分钟"></el-input-number>
-              </el-form-item>
-            </el-col>
-          </el-row>
+          <el-form-item label="邮件地址" prop="account">
+            <el-input v-model="create.params.account" autocomplete="off" placeholder="请输入被邀请人邮箱地址"></el-input>
+          </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button @click="create.dialog = false">取消</el-button>
@@ -105,11 +94,8 @@
           <el-table-column prop="initiator_type" label="用户组">
             <template slot-scope="scope">{{scope.row.initiator_type === 'user' ? '管理员' : '客户'}}</template>
           </el-table-column>
-          <el-table-column prop="account" label="联系信息" min-width="100"></el-table-column>
-          <el-table-column prop="mode" label="发送方式">
-            <template slot-scope="scope">{{scope.row.mode === 'mobile' ? '短信' : '邮件'}}</template>
-          </el-table-column>
-          <el-table-column prop="expires" label="有效期" min-width="100"></el-table-column>
+          <el-table-column prop="account" label="邮箱" min-width="100"></el-table-column>
+          <el-table-column prop="expires" label="有效期" min-width="120"></el-table-column>
           <el-table-column prop="status" label="邀请状态">
             <template slot-scope="scope">
               <el-tag :type="scope.row.status === 'unregistered' ? 'info' : 'success'">{{scope.row.status === 'unregistered' ? '未注册' : '已注册'}}</el-tag>
@@ -153,15 +139,14 @@
         loading: false,
         classes: ['animated', 'fade-in', 'fast'],
         params: {
+          status: '',
           account: '',
           size: 10,
         },
         create: {
           dialog: false,
           params: {
-            mode: '',
             account: '',
-            expires: 30
           },
           rules: {
             mode: [
@@ -289,7 +274,18 @@
         }
       },
       handleDelete(invitation) {
-
+        api.invitation.deleteInvitation(invitation.id).then(res => {
+          this.$message.success({
+            offset: 95,
+            message: res.message
+          });
+          this.fetchInvitations();
+        }).catch(err => {
+          this.$message.error({
+            offset: 95,
+            message: err.message
+          })
+        })
       }
     },
     mounted() {
