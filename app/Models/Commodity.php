@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Eloquent;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\Routing\UrlGenerator;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -34,6 +36,17 @@ class Commodity extends Model
     public function trading()
     {
         return $this->hasOne(Trading::class, 'commodity_id', 'id');
+    }
+
+    /**
+     * Date: 2020/5/14
+     * @param $image
+     * @return string
+     * @author George
+     */
+    public function getImageAttribute($image)
+    {
+        return url($image);
     }
 
     /**
