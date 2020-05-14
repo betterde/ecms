@@ -34,37 +34,43 @@
     <el-dialog title="创建库存" :visible.sync="create.dialog" @close="handleClose('create')" width="600px" :close-on-click-modal="false">
       <el-form :model="create.params" :rules="create.rules" ref="create" label-position="top">
         <el-row :gutter="10">
-          <el-col :span="24">
+          <el-col :span="24" style="text-align: center">
+            <el-upload class="avatar-uploader" name="image" action="/api/commodity/image" :headers="upload.headers" :show-file-list="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
+              <img v-if="create.params.image" :src="create.params.image" class="avatar">
+              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            </el-upload>
+          </el-col>
+        </el-row>
+        <el-row :gutter="10">
+          <el-col :span="8">
+            <el-form-item label="品牌" prop="brand">
+              <el-select style="width: 100%" v-model="create.params.brand" @focus="fetchBrands" :loading="select.loading" default-first-option allow-create clearable filterable placeholder="输入或选择一个品牌">
+                <el-option v-for="brand in brands" :key="brand.name" :label="brand.name" :value="brand.name"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="16">
             <el-form-item label="名称" prop="name">
               <el-input v-model="create.params.name" autocomplete="off" placeholder="请输入名称"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row :gutter="10">
-          <el-col :span="12">
-            <el-form-item label="品牌" prop="brand">
-              <el-select style="width: 100%" v-model="create.params.brand" @focus="fetchBrands" :loading="select.loading" default-first-option allow-create clearable filterable placeholder="请输入或选择一个品牌">
-                <el-option v-for="brand in brands" :key="brand.name" :label="brand.name" :value="brand.name"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
+          <el-col :span="8">
             <el-form-item label="分类" prop="category">
-              <el-select style="width: 100%" v-model="create.params.category" @focus="fetchCategories" :loading="select.loading" default-first-option allow-create clearable filterable placeholder="请输入或选择一个分类">
+              <el-select style="width: 100%" v-model="create.params.category" @focus="fetchCategories" :loading="select.loading" default-first-option allow-create clearable filterable placeholder="输入或选择一个分类">
                 <el-option v-for="category in categories" :key="category.name" :label="category.name" :value="category.name"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row :gutter="10">
-          <el-col :span="12">
+          <el-col :span="8">
             <el-form-item label="单位" prop="unit">
               <el-select style="width: 100%" v-model="create.params.unit" @focus="fetchUnits" :loading="select.loading" default-first-option allow-create clearable filterable placeholder="请选择商品单位">
                 <el-option v-for="unit in units" :key="unit.name" :label="unit.name" :value="unit.name"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="12">
+          <el-col :span="8">
             <el-form-item label="规格" prop="specification">
               <el-input v-model="create.params.specification" placeholder="请输入商品规格"></el-input>
             </el-form-item>
@@ -82,37 +88,43 @@
     <el-dialog title="编辑库存" :visible.sync="update.dialog" @close="handleClose('update')" width="600px" :close-on-click-modal="false">
       <el-form :model="update.params" :rules="update.rules" ref="update" label-position="top">
         <el-row :gutter="10">
-          <el-col :span="24">
-            <el-form-item label="名称" prop="name">
-              <el-input v-model="update.params.name" autocomplete="off" placeholder="请输入名称"></el-input>
-            </el-form-item>
+          <el-col :span="24" style="text-align: center">
+            <el-upload class="avatar-uploader" name="image" action="/api/commodity/image" :headers="upload.headers" :show-file-list="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
+              <img v-if="update.params.image" :src="update.params.image" class="avatar">
+              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            </el-upload>
           </el-col>
         </el-row>
         <el-row :gutter="10">
-          <el-col :span="12">
+          <el-col :span="8">
             <el-form-item label="品牌" prop="brand">
               <el-select style="width: 100%" v-model="update.params.brand" @focus="fetchBrands" :loading="select.loading" default-first-option allow-create clearable filterable placeholder="请输入或选择一个品牌">
                 <el-option v-for="brand in brands" :key="brand.name" :label="brand.name" :value="brand.name"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="12">
+          <el-col :span="16">
+            <el-form-item label="名称" prop="name">
+              <el-input v-model="update.params.name" autocomplete="off" placeholder="请输入名称"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="10">
+          <el-col :span="8">
             <el-form-item label="分类" prop="category">
               <el-select style="width: 100%" v-model="update.params.category" @focus="fetchCategories" :loading="select.loading" default-first-option allow-create clearable filterable placeholder="请输入或选择一个分类">
                 <el-option v-for="category in categories" :key="category.name" :label="category.name" :value="category.name"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row :gutter="10">
-          <el-col :span="12">
+          <el-col :span="8">
             <el-form-item label="单位" prop="unit">
               <el-select style="width: 100%" v-model="update.params.unit" @focus="fetchUnits" :loading="select.loading" default-first-option allow-create clearable filterable placeholder="请选择商品单位">
                 <el-option v-for="unit in units" :key="unit.name" :label="unit.name" :value="unit.name"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="12">
+          <el-col :span="8">
             <el-form-item label="规格" prop="specification">
               <el-input v-model="update.params.specification" placeholder="请输入商品规格"></el-input>
             </el-form-item>
@@ -129,6 +141,11 @@
     </el-dialog>
     <div class="panel-body" :class="classes">
       <el-table v-loading="loading" :data="inventories" @sort-change="changeSort" style="width: 100%" ref="pipeline">
+        <el-table-column label="图片">
+          <template slot-scope="scope">
+            <el-image style="width: 80px; height: 80px" :src="scope.row.image" fit="cover"></el-image>
+          </template>
+        </el-table-column>
         <el-table-column prop="brand" label="品牌"></el-table-column>
         <el-table-column prop="category" label="分类"></el-table-column>
         <el-table-column prop="name" label="名称" min-width="100"></el-table-column>
@@ -167,6 +184,7 @@
 
 <script>
   import api from "../../apis";
+  import {mapState} from 'vuex';
 
   export default {
     name: "List",
@@ -187,6 +205,7 @@
         create: {
           dialog: false,
           params: {
+            image: '',
             name: '',
             brand: '',
             description: '',
@@ -213,6 +232,7 @@
           id: null,
           dialog: false,
           params: {
+            image: '',
             name: '',
             brand: '',
             description: '',
@@ -242,11 +262,19 @@
         select: {
           loading: false
         },
+        upload: {
+          headers: {}
+        },
         meta: {
           total: 0,
           page_sizes: [10, 20, 50]
         }
       }
+    },
+    computed: {
+      ...mapState({
+        access_token: state => state.account.access_token,
+      })
     },
     methods: {
       fetchUnits() {
@@ -307,6 +335,12 @@
             this.update.index = null;
             break;
         }
+      },
+      handleAvatarSuccess(res) {
+        this.create.params.image = 'http://ecms.it' + res.data;
+      },
+      beforeAvatarUpload() {
+
       },
       /**
        * Submit form
@@ -431,11 +465,36 @@
       }
     },
     mounted() {
+      this.upload.headers = {
+        Authorization: 'Bearer ' + this.access_token
+      };
       this.fetchCommodities();
     }
   }
 </script>
 
 <style lang="scss">
-
+  .avatar-uploader .el-upload {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .avatar-uploader .el-upload:hover {
+    border-color: #409EFF;
+  }
+  .avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 178px;
+    height: 178px;
+    line-height: 178px;
+    text-align: center;
+  }
+  .avatar {
+    width: 178px;
+    height: 178px;
+    display: block;
+  }
 </style>

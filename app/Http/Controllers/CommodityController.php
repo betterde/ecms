@@ -6,6 +6,7 @@ use Exception;
 use App\Models\Commodity;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Validation\ValidationException;
 
@@ -115,6 +116,26 @@ class CommodityController extends Controller
     }
 
     /**
+     * 上传商品图片
+     *
+     * Date: 2020/5/14
+     * @param Request $request
+     * @return JsonResponse
+     * @author George
+     */
+    public function image(Request $request)
+    {
+        $request->validate([
+            'image' => 'required|dimensions:width=512,height=512'
+        ]);
+
+        $image = $request->file('image');
+        $path = $image->store('assets/images/commodities', 'public');
+        $url = Storage::url($path);
+        return success($url);
+    }
+
+    /**
      * Store a newly created resource in storage.
      *
      * @param Request $request
@@ -187,7 +208,9 @@ class CommodityController extends Controller
         if ($commodity->amount > 0) {
             return failed("当前商品还有库存无法删除", 422);
         }
-        $commodity->delete();
+        if (Storage::delete($commodity->image)) {
+            $commodity->delete();
+        }
         return deleted();
     }
 }
