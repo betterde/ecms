@@ -154,7 +154,7 @@
               y: 0.6
             }
           },
-          padding: [20, 20, 40, 60]
+          padding: [20, 40, 40, 60]
         });
         balance.animate(true);
         balance.legend({
@@ -199,7 +199,7 @@
               y: 1
             }
           },
-          padding: [0, 20, 40, 60]
+          padding: [0, 40, 40, 60]
         });
         quantity.data(this.summary.order_quantity);
         quantity.interaction('tooltip');

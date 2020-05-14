@@ -8,9 +8,7 @@
               <i slot="prefix" class="el-input__icon el-icon-search"></i>
             </el-input>
           </el-col>
-          <el-col :span="16" style="text-align: right">
-            <el-button type="primary" plain @click="handleCreate">创建</el-button>
-          </el-col>
+          <el-col :span="16" style="text-align: right"></el-col>
         </el-row>
       </div>
     </div>
@@ -40,7 +38,7 @@
     <div class="panel-body" :class="classes">
       <el-table v-loading="loading" :data="customers" :default-sort="meta.sort" style="width: 100%" ref="pipeline">
         <el-table-column prop="name" label="姓名" width="100"></el-table-column>
-        <el-table-column prop="mobile" label="手机" width="140"></el-table-column>
+        <el-table-column prop="email" label="邮箱"></el-table-column>
         <el-table-column prop="balance" label="余额" width="80"></el-table-column>
         <el-table-column prop="vip" label="会员" width="50">
           <template slot-scope="scope">
