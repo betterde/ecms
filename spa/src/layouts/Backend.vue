@@ -25,7 +25,7 @@
             <div class="avatar grid-content" v-html="profile.name.slice(0,1)"></div>
           </span>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item command="a">个人信息</el-dropdown-item>
+              <el-dropdown-item command="profile">个人信息</el-dropdown-item>
               <el-dropdown-item command="signOut">退出登陆</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
@@ -59,6 +59,7 @@
             this.signOut();
             break;
           case 'profile':
+            this.$router.push({path: '/profile'});
             break;
         }
       },
