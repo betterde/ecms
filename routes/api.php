@@ -35,6 +35,7 @@ Route::group(['middleware' => 'auth:users,customer'], function () {
     Route::get('commodity/brand', 'CommodityController@brand');
     Route::get('commodity/category', 'CommodityController@category');
     Route::get('commodity/unit', 'CommodityController@unit');
+    Route::post('commodity/image', 'CommodityController@image');
     Route::apiResource('commodity', 'CommodityController');
     Route::apiResource('order', 'OrderController');
     Route::post('profile/avatar', 'ProfileController@avatar');
