@@ -44,9 +44,9 @@
       return {
         loading: false,
         credentials: {
-          guard: 'customer',
-          username: 'george@betterde.com',
-          password: 'George@1994'
+          guard: '',
+          username: '',
+          password: ''
         },
         rules: {
           username: [
