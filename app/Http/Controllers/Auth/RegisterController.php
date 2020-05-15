@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use Exception;
 use Throwable;
 use App\Models\Customer;
 use App\Models\Invitation;
@@ -123,7 +124,6 @@ class RegisterController extends Controller
                 'id' => Str::uuid(),
                 'name' => $data['name'],
                 'email' => $data['email'],
-                'mobile' => $data['mobile'],
                 'password' => Hash::make($data['password']),
                 'referrer' => $data['initiator'],
                 'referrer_type' => $data['initiator_type']
@@ -135,7 +135,7 @@ class RegisterController extends Controller
             return $customer;
         } catch (Throwable $exception) {
             DB::rollBack();
-            return null;
+            throw new Exception('注册用户失败，请稍后再试！');
         }
     }
 
