@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use Throwable;
 use App\Models\User;
+use App\Models\Customer;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Http\JsonResponse;
@@ -10,6 +12,8 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Contracts\Hashing\Hasher;
+use Illuminate\Auth\EloquentUserProvider;
 use Illuminate\Validation\ValidationException;
 
 /**
@@ -63,6 +67,60 @@ class ProfileController extends Controller
 
         $user->update($attributes);
         return updated($user);
+    }
+
+    /**
+     * Date: 2020/5/15
+     * @param Request $request
+     * @param Hasher $hasher
+     * @return JsonResponse
+     * @throws Throwable
+     * @author George
+     */
+    public function password(Request $request, Hasher $hasher)
+    {
+        $attributes = $request->validate([
+            'old' => ['required', 'string', 'min:8'],
+            'password' => ['required', 'string', 'min:8', 'confirmed']
+        ]);
+
+        $user = $request->user();
+        if ($user instanceof Customer) {
+            $provider = new EloquentUserProvider($hasher, Customer::class);
+        } else {
+            $provider = new EloquentUserProvider($hasher, User::class);
+        }
+
+        if ($provider->validateCredentials($user, ['password' => $attributes['old']])) {
+            $user->password = Hash::make($attributes['password']);
+            $user->saveOrFail();
+            return message('密码修改成功！');
+        }
+
+        return failed('您输入的旧密码有误！', 400);
+    }
+
+    /**
+     * 修改地址
+     *
+     * Date: 2020/5/15
+     * @param Request $request
+     * @return JsonResponse
+     * @author George
+     */
+    public function address(Request $request)
+    {
+        $attributes = $request->validate([
+            'address' => 'nullable|string',
+        ]);
+
+        $user = $request->user();
+        if ($user instanceof Customer) {
+            $user->update($attributes);
+            return success($user);
+        } else {
+            return failed('用户类型不支持修改地址信息！', 400);
+        }
     }
 
     /**
