@@ -32,7 +32,7 @@
       <el-dialog title="发起邀请" :visible.sync="create.dialog" @close="handleClose('create')" width="400px" :close-on-click-modal="false">
         <el-form :model="create.params" :rules="create.rules" ref="create" label-position="top">
           <el-form-item label="邮件地址" prop="account">
-            <el-input v-model="create.params.account" autocomplete="off" placeholder="请输入被邀请人邮箱地址"></el-input>
+            <el-input v-model="create.params.account" @keyup.enter.native="submit('create')" autocomplete="off" placeholder="请输入被邀请人邮箱地址"></el-input>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -105,7 +105,7 @@
           <el-table-column prop="option" label="操作" width="130">
             <template slot-scope="scope">
               <el-tooltip class="item" effect="dark" content="复制连接" placement="top">
-                <el-button size="mini" icon="el-icon-link" circle @click="generateRegisterLink(scope.row)"></el-button>
+                <el-button :disabled="scope.row.status === 'registered'" size="mini" icon="el-icon-link" circle @click="generateRegisterLink(scope.row)"></el-button>
               </el-tooltip>
               <el-tooltip class="item" effect="dark" content="删除" placement="top">
                 <el-button :disabled="scope.row.status === 'registered'" size="mini" icon="el-icon-delete" type="danger" plain circle
@@ -149,14 +149,8 @@
             account: '',
           },
           rules: {
-            mode: [
-              {type: 'string', required: true, message: '请选择发送方式', trigger: 'change'}
-            ],
             account: [
-              {type: 'string', required: true, message: '请输入手机号码', trigger: 'blur'}
-            ],
-            expires: [
-              {type: 'number', required: true, message: '请输入过期时间', trigger: 'blur'}
+              {type: 'string', required: true, message: '请输入邮箱地址', trigger: 'blur'}
             ]
           }
         },
@@ -179,8 +173,9 @@
           this.customers = res.data;
         });
       },
-      fetchInvitations() {
+      fetchInvitations(page = 1) {
         this.loading = true;
+        this.params.page = page;
         api.invitation.fetchInvitations(this.params).then(res => {
           this.invitations = res.data;
           this.loading = false;
@@ -255,11 +250,11 @@
        * 分页跳转时触发
        */
       handleCurrentChange(page) {
-        // this.fetchCommodities(page);
+        this.fetchInvitations(page);
       },
       handleSizeChange(size) {
         this.params.size = size;
-        // this.fetchCommodities();
+        this.fetchCommodities();
       },
       generateRegisterLink(invitation) {
         let date = new Date(invitation.expires);
