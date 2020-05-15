@@ -183,7 +183,7 @@
 </template>
 
 <script>
-  import api from "../../apis";
+  import api from "../../../../apis";
   import {mapState} from 'vuex';
 
   export default {

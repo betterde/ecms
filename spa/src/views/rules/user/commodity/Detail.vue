@@ -17,7 +17,7 @@
 </template>
 
 <script>
-  import api from '../../apis'
+  import api from '../../../../apis'
   import { Chart } from '@antv/g2'
 
   export default {

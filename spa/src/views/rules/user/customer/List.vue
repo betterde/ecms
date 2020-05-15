@@ -73,7 +73,7 @@
 </template>
 
 <script>
-  import api from "../../apis";
+  import api from "../../../../apis";
 
   export default {
     name: "List",

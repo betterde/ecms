@@ -88,7 +88,11 @@
         <el-table-column prop="cost" label="成本"></el-table-column>
         <el-table-column prop="profit" label="利润"></el-table-column>
         <el-table-column prop="date" label="日期" sortable="custom"></el-table-column>
-        <el-table-column prop="remark" label="备注" min-width="100px"></el-table-column>
+        <el-table-column label="备注" min-width="100px">
+          <template slot-scope="scope">
+            <span class="remark">{{scope.row.remark}}</span>
+          </template>
+        </el-table-column>
         <el-table-column prop="option" label="操作" width="130">
           <template slot-scope="scope">
             <el-tooltip class="item" effect="dark" content="详情" placement="top">
@@ -392,5 +396,10 @@
 </script>
 
 <style lang="scss">
-
+  .remark {
+    overflow: hidden;
+    white-space: nowrap;
+    word-break: break-all;
+    text-overflow: ellipsis;
+  }
 </style>

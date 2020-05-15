@@ -5,9 +5,9 @@
 </template>
 
 <script>
-  import {mapState} from 'vuex'
-  import Guest from './layouts/Guest'
-  import Backend from './layouts/Backend'
+  import {mapState} from 'vuex';
+  import Guest from './layouts/Guest';
+  import Backend from './layouts/Backend';
 
   export default {
     name: 'app',
