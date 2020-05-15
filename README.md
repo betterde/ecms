@@ -19,6 +19,8 @@
 - [x] 采购订单导出 Excel
 - [X] 集成 Google 登录 (服务器和客户端都能访问 Google 服务器的情况下可以开启)
 - [x] 邀请注册
+- [] 微信小程序
+- [] 客户管理后台
 - [] 代理商管理
 - [] 支付系统
 
@@ -38,12 +40,41 @@ php artisan migrate # 迁移数据表信息
 php artisan jwt:secret # 生成 JWT Secret
 ```
 
+## 创建系统管理用户
+
+```bash
+php artisan create:user
+
+ Please enter your name:
+ > Admin
+
+ Please enter your email:
+ > admin@example.com
+
+ Please enter your password:
+ > 
+
+ Please enter your password again:
+ > 
+
+ Do you wish to continue? (yes/no) [no]:
+ > yes
+
+User created successfully!
++--------------------------------------+--------+---------------------+---------------------+
+| ID                                   | Name   | Email               | Created at          |
++--------------------------------------+--------+---------------------+---------------------+
+| 1f8db157-ed9b-4886-9776-0e1bdd2fb2be | Admin  | admin@example.com   | 2020-05-15 14:48:46 |
++--------------------------------------+--------+---------------------+---------------------+
+```
+
+## Web
+
 如果需要将 SPA 和 API 分开部署，需要注释 `routes/web.php` 中的路由：
 ```php
 Route::view('{path?}', 'index')->where('path', '[\/\w\.-]*');
 ```
 
-## Web
 
 这里并没有采用 Laravel 自带的 Vue 脚手架，也是便于将前端和 Laravel 进行拆分。
 
