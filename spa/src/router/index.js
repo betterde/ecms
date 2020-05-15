@@ -12,46 +12,6 @@ Router.prototype.push = function push(location) {
 
 const routes = [
   {
-    path: '/commodity',
-    name: 'commodity',
-    meta: {
-      requiresAuth: true,
-      rules: ['user']
-    },
-    component: () => import('../views/commodity/Index.vue'),
-    children: [
-      {
-        path: ':id/detail',
-        name: 'commodityDetail',
-        meta: {
-          requiresAuth: true,
-          rules: ['user']
-        },
-        component: () => import('../views/commodity/Detail.vue')
-      }
-    ]
-  },
-  {
-    path: '/customer',
-    name: 'customer',
-    meta: {
-      requiresAuth: true,
-      rules: ['user', 'customer']
-    },
-    component: () => import('../views/customer/Index.vue'),
-    children: [
-      {
-        path: ':id/detail',
-        name: 'customerDetail',
-        meta: {
-          requiresAuth: true,
-          rules: ['user', 'customer']
-        },
-        component: () => import('../views/customer/Detail.vue')
-      }
-    ]
-  },
-  {
     path: '/invitation',
     name: 'invitation',
     meta: {
