@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Eloquent;
+use DateTimeInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -28,4 +29,15 @@ class Pricing extends Model
     protected $casts = [
         'buying' => 'float'
     ];
+
+    /**
+     * Date: 2020/5/15
+     * @param DateTimeInterface $dateTime
+     * @return string
+     * @author George
+     */
+    public function serializeDate(DateTimeInterface $dateTime)
+    {
+        return $dateTime->format('Y-m-d H:i:s');
+    }
 }

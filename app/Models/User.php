@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use DateTimeInterface;
 use Eloquent;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Carbon;
@@ -60,7 +61,7 @@ class User extends Authenticatable implements MustVerifyEmail, JWTSubject
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'id', 'name', 'email', 'password', 'avatar',
     ];
 
     /**
@@ -121,5 +122,16 @@ class User extends Authenticatable implements MustVerifyEmail, JWTSubject
     public function invitations()
     {
         return $this->morphMany(Invitation::class, 'initiator');
+    }
+
+    /**
+     * Date: 2020/5/15
+     * @param DateTimeInterface $dateTime
+     * @return string
+     * @author George
+     */
+    public function serializeDate(DateTimeInterface $dateTime)
+    {
+        return $dateTime->format('Y-m-d H:i:s');
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Eloquent;
+use DateTimeInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -36,5 +37,16 @@ class Inventory extends Model
     public function pricing()
     {
         return $this->belongsTo(Pricing::class, 'pricing_id', 'id');
+    }
+
+    /**
+     * Date: 2020/5/15
+     * @param DateTimeInterface $dateTime
+     * @return string
+     * @author George
+     */
+    public function serializeDate(DateTimeInterface $dateTime)
+    {
+        return $dateTime->format('Y-m-d H:i:s');
     }
 }
