@@ -32,5 +32,21 @@ export default {
    */
   profile() {
     return Vue.axios.get('/api/auth/profile');
+  },
+  /**
+   * Modify password
+   * @param params
+   * @returns {*}
+   */
+  password(params) {
+    return Vue.axios.post('/api/profile/password', params);
+  },
+  /**
+   * Modify address
+   * @param params
+   * @returns {*}
+   */
+  address(params) {
+    return Vue.axios.post('/api/profile/address', params);
   }
 }
