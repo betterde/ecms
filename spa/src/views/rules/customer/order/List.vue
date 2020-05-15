@@ -3,15 +3,6 @@
     <div class="panel-header" :class="classes">
       <div class="panel-tools">
         <el-row :gutter="20">
-          <el-col :xs="24" :span="2">
-            <el-select style="width: 100%" v-model="params.type" @clear="handleClear" clearable filterable placeholder="类型">
-              <el-option label="采购" value="采购"></el-option>
-              <el-option label="销售" value="销售"></el-option>
-              <el-option label="邮费" value="邮费"></el-option>
-              <el-option label="满减" value="满减"></el-option>
-              <el-option label="损耗" value="损耗"></el-option>
-            </el-select>
-          </el-col>
           <el-col :xs="24" :span="6">
             <el-input placeholder="在这里输入要搜索的内容" v-model="params.search" @keyup.enter.native="fetchOrders" @clear="handleClear" clearable>
               <i slot="prefix" class="el-input__icon el-icon-search"></i>
@@ -23,7 +14,7 @@
           <el-col :xs="12" :span="2">
             <el-button type="primary" icon="el-icon-search" @click="fetchOrders" plain>搜索</el-button>
           </el-col>
-          <el-col :xs="12" :span="11" style="text-align: right">
+          <el-col :xs="12" :span="13" style="text-align: right">
             <el-button type="primary" plain @click="handleCreate">创建</el-button>
           </el-col>
         </el-row>
@@ -32,41 +23,6 @@
     <el-dialog title="创建订单" :visible.sync="create.dialog" @close="handleClose('create')" width="600px"
                :close-on-click-modal="false">
       <el-form :model="create.params" :rules="create.rules" ref="create" label-position="top">
-        <el-row :gutter="10">
-          <el-col :span="12">
-            <el-form-item label="类型" prop="type">
-              <el-select v-model="create.params.type" clearable filterable placeholder="请选择类型" style="width: 100%">
-                <el-option label="采购" value="采购"></el-option>
-                <el-option label="销售" value="销售"></el-option>
-                <el-option label="邮费" value="邮费"></el-option>
-                <el-option label="满减" value="满减"></el-option>
-                <el-option label="损耗" value="损耗"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="日期" prop="date">
-              <el-date-picker style="width: 100%" v-model="create.params.date" value-format="yyyy-MM-dd" type="date" placeholder="选择日期"></el-date-picker>
-            </el-form-item>
-          </el-col>
-          <el-col v-if="create.params.type === '销售'" :span="12">
-            <el-form-item label="折扣" prop="discount">
-              <el-input-number v-model="create.params.discount" :min="0" :max="100" :controls="false" :disabled="create.params.type !== '销售'" placeholder="如：85"></el-input-number>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item v-if="['邮费', '满减'].includes(create.params.type)" label="总计" prop="total">
-              <el-input-number v-model="create.params.total" :min="0" :precision="2" :controls="false" :disabled="['邮费', '满减'].includes(create.params.type) !== true" placeholder="请输入总价"></el-input-number>
-            </el-form-item>
-          </el-col>
-          <el-col v-if="create.params.type === '销售'" :span="12">
-            <el-form-item label="客户" prop="remark">
-              <el-select style="width: 100%" v-model="create.params.customer_id" @focus="fetchCustomers" :remote-method="searchCustomers" clearable remote filterable placeholder="请选择类型">
-                <el-option v-for="customer in customers" :key="customer.id" :label="`${customer.name} ${customer.remark === null ? '' : '(' + customer.remark + ')'}`" :value="customer.id"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-        </el-row>
         <el-form-item label="备注" prop="remark">
           <el-input v-model="create.params.remark" autocomplete="off" placeholder="请输订单描述信息"></el-input>
         </el-form-item>
@@ -79,15 +35,18 @@
     <div class="panel-body" :class="classes">
       <el-table v-loading="loading" :data="orders" @sort-change="changeSort" style="width: 100%" ref="pipeline">
         <el-table-column prop="id" label="ID" min-width="80"></el-table-column>
-        <el-table-column prop="type" label="类型"></el-table-column>
         <el-table-column prop="total" label="总价"></el-table-column>
         <el-table-column prop="discount" label="折扣">
           <template slot-scope="scope"><span>{{discount(scope.row)}}</span></template>
         </el-table-column>
         <el-table-column prop="actual" label="实际金额"></el-table-column>
-        <el-table-column prop="cost" label="成本"></el-table-column>
-        <el-table-column prop="profit" label="利润"></el-table-column>
         <el-table-column prop="date" label="日期" sortable="custom"></el-table-column>
+        <el-table-column prop="status" label="状态">
+          <template slot-scope="scope">
+            <el-tag v-if="scope.row.status === 'pending'" size="small" type="info">待发货</el-tag>
+            <el-tag v-else size="small" type="success">已完成</el-tag>
+          </template>
+        </el-table-column>
         <el-table-column prop="remark" label="备注" min-width="100px"></el-table-column>
         <el-table-column prop="option" label="操作" width="130">
           <template slot-scope="scope">
@@ -145,26 +104,7 @@
         create: {
           dialog: false,
           params: {
-            date: `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`,
-            type: '',
-            remark: '',
-            total: 0.00,
-            discount: 100,
-            customer_id: null
-          },
-          rules: {
-            date: [
-              {type: 'string', required: true, message: '请选择日期', trigger: 'change'}
-            ],
-            type: [
-              {type: 'string', required: true, message: '请选择类型', trigger: 'change'}
-            ],
-            total: [
-              {type: 'number', required: true, message: '请输入金额', trigger: 'blur'}
-            ],
-            discount: [
-              {type: 'number', required: true, message: '请输入折扣', trigger: 'blur'}
-            ]
+            remark: ''
           }
         },
         brands: [],

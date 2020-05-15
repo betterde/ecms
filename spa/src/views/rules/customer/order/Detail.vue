@@ -7,11 +7,89 @@
             <el-button type="info" plain @click="$router.back()">返回</el-button>
           </el-col>
           <el-col :span="12" style="text-align: right">
-            <el-button type="primary" plain @click="handleCreate">添加商品</el-button>
+            <el-button v-if="active === 'logistic' && order.logistic === null" @click="logistic.create.dialog = true">添加收件人</el-button>
+            <el-button v-if="active === 'logistic' && order.logistic !== null" @click="logisticEditHandler">编辑收件人</el-button>
+            <el-button v-if="active === 'order'" type="primary" plain @click="handleCreate">添加商品</el-button>
           </el-col>
         </el-row>
       </div>
     </div>
+    <el-dialog title="添加收件人" :visible.sync="logistic.create.dialog" @close="handleClose('createLogistic')" width="600px" :close-on-click-modal="false">
+      <el-form :model="logistic.create.params" :rules="logistic.create.rules" ref="createLogistic" label-position="top">
+        <el-row :gutter="10">
+          <el-col :span="8">
+            <el-form-item label="收件人" prop="receiver">
+              <el-input v-model="logistic.create.params.receiver" placeholder="请输入收件人姓名" clearable></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="10">
+            <el-form-item label="联系方式" prop="mobile">
+              <el-input v-model="logistic.create.params.mobile" placeholder="请输入收件人联系方式" clearable></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item label="付费方式">
+              <el-select style="width: 100%" v-model="logistic.create.params.type" @clear="handleClear" clearable filterable placeholder="类型">
+                <el-option label="寄付" value="寄付"></el-option>
+                <el-option label="到付" value="到付"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="地址" prop="address">
+              <el-input v-model="logistic.create.params.address" placeholder="请输入收件人地址" clearable></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="备注" prop="remark">
+              <el-input v-model="logistic.create.params.remark" placeholder="请输入备注信息" clearable></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="logistic.create.dialog = false">取消</el-button>
+        <el-button type="primary" @click="submit('createLogistic')">确定</el-button>
+      </div>
+    </el-dialog>
+    <el-dialog title="编辑收件人" :visible.sync="logistic.update.dialog" @close="handleClose('updateLogistic')" width="600px" :close-on-click-modal="false">
+      <el-form :model="logistic.update.params" :rules="logistic.update.rules" ref="updateLogistic" label-position="top">
+        <el-row :gutter="10">
+          <el-col :span="8">
+            <el-form-item label="收件人" prop="receiver">
+              <el-input v-model="logistic.update.params.receiver" placeholder="请输入收件人姓名" clearable></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="10">
+            <el-form-item label="联系方式" prop="mobile">
+              <el-input v-model="logistic.update.params.mobile" placeholder="请输入收件人联系方式" clearable></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item label="付费方式">
+              <el-select style="width: 100%" v-model="logistic.update.params.type" @clear="handleClear" clearable filterable placeholder="类型">
+                <el-option label="寄付" value="寄付"></el-option>
+                <el-option label="到付" value="到付"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="地址" prop="address">
+              <el-input v-model="logistic.update.params.address" placeholder="请输入收件人地址" clearable></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="备注" prop="remark">
+              <el-input v-model="logistic.update.params.remark" placeholder="请输入备注信息" clearable></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="logistic.update.dialog = false">取消</el-button>
+        <el-button type="primary" @click="submit('updateLogistic')">确定</el-button>
+      </div>
+    </el-dialog>
     <el-dialog title="创建订单详情" :visible.sync="create.dialog" @close="handleClose('create')" width="600px"
                :close-on-click-modal="false">
       <el-form :model="create.params" :rules="create.rules" ref="create" label-position="top">
@@ -60,9 +138,9 @@
               <span class="detail-item-content">{{order.id}}</span>
             </td>
             <td class="detail-item">
-              <span class="detail-item-label detail-item-colon">订单类型</span>
-              <span class="detail-item-content">{{order.type}}
-                <el-tooltip class="item" effect="dark" content="采购：代表进货的订单明细；销售：代表售出的订单明细" placement="top">
+              <span class="detail-item-label detail-item-colon">总金额</span>
+              <span class="detail-item-content">{{order.total}}
+                <el-tooltip class="item" effect="dark" content="所有商品的总金额之和" placement="top">
                   <i class="el-icon-question"></i>
                 </el-tooltip>
               </span>
@@ -73,14 +151,6 @@
             </td>
           </tr>
           <tr>
-            <td class="detail-item">
-              <span class="detail-item-label detail-item-colon">总金额</span>
-              <span class="detail-item-content">{{order.total}}
-                <el-tooltip class="item" effect="dark" content="所有商品的总金额之和" placement="top">
-                  <i class="el-icon-question"></i>
-                </el-tooltip>
-              </span>
-            </td>
             <td class="detail-item">
               <span class="detail-item-label detail-item-colon">折扣</span>
               <span class="detail-item-content">{{discount()}}
@@ -100,28 +170,6 @@
           </tr>
           <tr>
             <td class="detail-item">
-              <span class="detail-item-label detail-item-colon">成本</span>
-              <span class="detail-item-content">{{order.cost}}
-                <el-tooltip class="item" effect="dark" content="所有商品的进货成本之和" placement="top">
-                  <i class="el-icon-question"></i>
-                </el-tooltip>
-              </span>
-            </td>
-            <td class="detail-item">
-              <span class="detail-item-label detail-item-colon">利润</span>
-              <span class="detail-item-content">{{order.profit}}
-                <el-tooltip class="item" effect="dark" content="实际金额减去成本" placement="top">
-                  <i class="el-icon-question"></i>
-                </el-tooltip>
-              </span>
-            </td>
-            <td v-if="order.type === '销售' && order.customer !== null" class="detail-item">
-              <span class="detail-item-label detail-item-colon">客户</span>
-              <span class="detail-item-content">{{order.customer === null ? '无客户信息' : order.customer.name}}</span>
-            </td>
-          </tr>
-          <tr>
-            <td class="detail-item">
               <span class="detail-item-label detail-item-colon">备注</span>
               <span class="detail-item-content">{{order.remark === null ? '无备注' : order.remark}}</span>
             </td>
@@ -129,33 +177,86 @@
           </tbody>
         </table>
       </div>
-      <el-divider content-position="center">商品列表</el-divider>
-      <el-table v-loading="loading" :data="tradings" style="width: 100%" ref="pipeline">
-        <el-table-column prop="id" label="ID" min-width="100"></el-table-column>
-        <el-table-column prop="brand" label="品牌"></el-table-column>
-        <el-table-column prop="name" label="名称"></el-table-column>
-        <el-table-column prop="specification" label="规格"></el-table-column>
-        <el-table-column prop="unit" label="单位"></el-table-column>
-        <el-table-column prop="amount" label="数量"></el-table-column>
-        <el-table-column prop="price" label="单价"></el-table-column>
-        <el-table-column prop="total" label="总价"></el-table-column>
-        <el-table-column prop="option" label="操作" width="80">
-          <template slot-scope="scope">
-            <el-tooltip class="item" effect="dark" content="删除" placement="top">
-              <el-button size="mini" icon="el-icon-delete" type="danger" plain circle
-                         @click="handleDelete(scope.row)"></el-button>
-            </el-tooltip>
-          </template>
-        </el-table-column>
-      </el-table>
-      <div class="pagination">
-        <el-pagination background layout="sizes, total, prev, pager, next"
-                       :page-size="params.size" :page-sizes="meta.page_sizes"
-                       :current-page.sync="params.page" :total="meta.total"
-                       @current-change="handleCurrentChange"
-                       @size-change="handleSizeChange">
-        </el-pagination>
-      </div>
+      <el-tabs style="padding: 0 20px" v-model="active">
+        <el-tab-pane label="订单列表" name="order">
+          <el-table v-loading="loading" :data="tradings" style="width: 100%" ref="pipeline">
+            <el-table-column prop="id" label="ID" min-width="100"></el-table-column>
+            <el-table-column prop="brand" label="品牌"></el-table-column>
+            <el-table-column prop="name" label="名称"></el-table-column>
+            <el-table-column prop="specification" label="规格"></el-table-column>
+            <el-table-column prop="unit" label="单位"></el-table-column>
+            <el-table-column prop="amount" label="数量"></el-table-column>
+            <el-table-column prop="price" label="单价"></el-table-column>
+            <el-table-column prop="total" label="总价"></el-table-column>
+            <el-table-column prop="option" label="操作" width="80">
+              <template slot-scope="scope">
+                <el-tooltip class="item" effect="dark" content="删除" placement="top">
+                  <el-button size="mini" icon="el-icon-delete" type="danger" plain circle
+                             @click="handleDelete(scope.row)"></el-button>
+                </el-tooltip>
+              </template>
+            </el-table-column>
+          </el-table>
+          <div class="pagination">
+            <el-pagination background layout="sizes, total, prev, pager, next"
+                           :page-size="params.size" :page-sizes="meta.page_sizes"
+                           :current-page.sync="params.page" :total="meta.total"
+                           @current-change="handleCurrentChange"
+                           @size-change="handleSizeChange">
+            </el-pagination>
+          </div>
+        </el-tab-pane>
+        <el-tab-pane label="收件人信息" name="logistic">
+          <div v-if="order.logistic !== null" class="details">
+            <table>
+              <tbody>
+              <tr>
+                <td class="detail-item">
+                  <span class="detail-item-label detail-item-colon">收件人</span>
+                  <span class="detail-item-content">{{order.logistic.receiver}}</span>
+                </td>
+                <td class="detail-item">
+                  <span class="detail-item-label detail-item-colon">联系方式</span>
+                  <span class="detail-item-content">{{order.logistic.mobile}}
+                <el-tooltip class="item" effect="dark" content="发货时该号码会收到提醒" placement="top">
+                  <i class="el-icon-question"></i>
+                </el-tooltip>
+              </span>
+                </td>
+                <td class="detail-item">
+                  <span class="detail-item-label detail-item-colon">收件地址</span>
+                  <span class="detail-item-content">{{order.logistic.address}}</span>
+                </td>
+              </tr>
+              <tr>
+                <td class="detail-item">
+                  <span class="detail-item-label detail-item-colon">运单号</span>
+                  <span class="detail-item-content">{{order.logistic.number ? order.logistic.number : '暂无'}}
+                <el-tooltip class="item" effect="dark" content="未发货状态无快递信息" placement="top">
+                  <i class="el-icon-question"></i>
+                </el-tooltip>
+              </span>
+                </td>
+                <td class="detail-item">
+                  <span class="detail-item-label detail-item-colon">快递公司</span>
+                  <span class="detail-item-content">{{order.logistic.company !== null ? order.logistic.company : '暂无'}}
+                <el-tooltip class="item" effect="dark" content="未发货状态无快递信息" placement="top">
+                  <i class="el-icon-question"></i>
+                </el-tooltip>
+              </span>
+                </td>
+              </tr>
+              <tr>
+                <td class="detail-item">
+                  <span class="detail-item-label detail-item-colon">备注</span>
+                  <span class="detail-item-content">{{order.logistic.remark === null ? '无备注' : order.remark}}</span>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </el-tab-pane>
+      </el-tabs>
     </div>
   </div>
 </template>
@@ -167,6 +268,7 @@
     name: "Detail",
     data() {
       return {
+        active: 'order',
         loading: false,
         classes: ['animated', 'fade-in', 'fast'],
         order: {
@@ -179,10 +281,63 @@
           profit: 0,
           actual: 0,
           remark: '',
-          created_at: ''
+          created_at: '',
+          logistic: null,
         },
         tradings: [],
         commodities: [],
+        logistic: {
+          create: {
+            dialog: false,
+            params: {
+              order_id: 0,
+              type: '寄付',
+              receiver: '',
+              mobile: '',
+              address: '',
+              remark: ''
+            },
+            rules: {
+              type: [
+                {type: 'string', required: true, message: '付费方式', trigger: 'change'}
+              ],
+              receiver: [
+                {type: 'string', required: true, message: '请输入收件人姓名', trigger: 'blur'}
+              ],
+              mobile: [
+                {type: 'string', required: true, message: '请输入联系方式', trigger: 'blur'}
+              ],
+              address: [
+                {type: 'string', required: true, message: '请输入收件地址', trigger: 'blur'}
+              ]
+            }
+          },
+          update: {
+            dialog: false,
+            params: {
+              order_id: 0,
+              type: '寄付',
+              receiver: '',
+              mobile: '',
+              address: '',
+              remark: ''
+            },
+            rules: {
+              type: [
+                {type: 'string', required: true, message: '付费方式', trigger: 'change'}
+              ],
+              receiver: [
+                {type: 'string', required: true, message: '请输入收件人姓名', trigger: 'blur'}
+              ],
+              mobile: [
+                {type: 'string', required: true, message: '请输入联系方式', trigger: 'blur'}
+              ],
+              address: [
+                {type: 'string', required: true, message: '请输入收件地址', trigger: 'blur'}
+              ]
+            }
+          }
+        },
         create: {
           amount: 0,
           dialog: false,
@@ -247,7 +402,10 @@
             this.tradings = res.data;
             this.meta.total = res.total;
           }).catch(err => {
-            window.console.log(err);
+            this.$message.error({
+              offset: 95,
+              message: err.message
+            })
           });
         }
       },
@@ -275,8 +433,17 @@
           });
         }
       },
+      handleClear() {
+
+      },
       handleCreate(){
         this.create.dialog = true;
+      },
+      logisticEditHandler() {
+        Object.keys(this.logistic.update.params).forEach(value => {
+          this.logistic.update.params[value] = this.order.logistic[value];
+        });
+        this.logistic.update.dialog = true;
       },
       discount() {
         if (this.order.discount === 100) {
@@ -298,12 +465,20 @@
             break;
           case 'update':
             break;
+          case 'createLogistic':
+            this.$refs.createLogistic.resetFields();
+            this.logistic.create.dialog = false;
+            break;
+          case 'updateLogistic':
+            this.$refs.updateLogistic.resetFields();
+            this.logistic.update.dialog = false;
+            break;
         }
       },
       submit(action) {
         switch (action) {
           case 'create':
-            this.$refs.create.validate((valid) => {
+            this.$refs.create.validate(valid => {
               if (valid) {
                 this.create.params.total = this.create.params.amount * this.create.params.price;
                 api.trading.createTrading(this.create.params).then(res => {
@@ -314,7 +489,7 @@
                   this.order.total += this.create.params.total;
                   this.fetchOrder();
                   this.fetchTradings();
-                  this.handleClose(action);
+                  this.create.dialog = false;
                 }).catch(err => {
                   this.$message.error({
                     offset: 95,
@@ -323,6 +498,51 @@
                 });
               } else {
                 return false;
+              }
+            });
+            break;
+          case 'createLogistic':
+            this.$refs.createLogistic.validate(valid => {
+              if (valid) {
+                this.loading = true;
+                this.logistic.create.params.order_id = this.order.id;
+                api.logistics.create(this.logistic.create.params).then(res => {
+                  this.order.logistic = res.data;
+                  this.$message.success({
+                    offset: 95,
+                    message: res.message
+                  });
+                  this.loading = false;
+                  this.logistic.create.dialog = false;
+                }).catch(err => {
+                  this.$message.error({
+                    offset: 95,
+                    message: err.message
+                  })
+                  this.loading = false;
+                });
+              }
+            });
+            break;
+          case 'updateLogistic':
+            this.$refs.updateLogistic.validate(valid => {
+              if (valid) {
+                this.loading = true;
+                api.logistics.update(this.order.logistic.id, this.logistic.update.params).then(res => {
+                  this.order.logistic = res.data;
+                  this.$message.success({
+                    offset: 95,
+                    message: res.message
+                  });
+                  this.loading = false;
+                  this.logistic.update.dialog = false;
+                }).catch(err => {
+                  this.$message.error({
+                    offset: 95,
+                    message: err.message
+                  })
+                  this.loading = false;
+                });
               }
             });
             break;
@@ -411,5 +631,7 @@
     .detail-item {
       padding-bottom: 20px;
     }
+  }
+  .logistics {
   }
 </style>
