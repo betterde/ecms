@@ -6,6 +6,7 @@ import order from './modules/order';
 import commodity from "./modules/commodity";
 import system from "./modules/system";
 import invitation from "./modules/invitation";
+import logistics from "./modules/logistics";
 
 export default {
   account,
@@ -15,5 +16,6 @@ export default {
   order,
   commodity,
   system,
-  invitation
+  invitation,
+  logistics
 }

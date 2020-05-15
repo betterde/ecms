@@ -39,9 +39,12 @@ Route::group(['middleware' => 'auth:users,customer'], function () {
     Route::apiResource('commodity', 'CommodityController');
     Route::apiResource('order', 'OrderController');
     Route::post('profile/avatar', 'ProfileController@avatar');
+    Route::post('profile/password', 'ProfileController@password');
+    Route::post('profile/address', 'ProfileController@address');
     Route::get('profile/{user}', 'ProfileController@show');
     Route::put('profile/{user}', 'ProfileController@update');
     Route::apiResource('invitation', 'InvitationController')->except('update');
+    Route::apiResource('logistics', 'LogisticsController');
 });
 
 //Route::middleware('auth:users,customer')->get('/user', function (Request $request) {
