@@ -35,6 +35,7 @@
 
 <script>
   import store from '../../../store';
+  import register from "../../../router/register";
 
   export default {
     name: "Register",
@@ -84,8 +85,9 @@
           if (valid) {
             this.loading = true;
             store.dispatch('register', {query: this.query, params: this.credentials}).then(() => {
-              store.dispatch("fetchProfile").then(() => {
+              store.dispatch("fetchProfile").then(res => {
                 this.loading = false;
+                this.$router.addRoutes(register(res.data.type));
                 this.$router.replace('/');
               });
             }).catch(err => {
