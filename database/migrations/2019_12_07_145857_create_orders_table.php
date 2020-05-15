@@ -28,6 +28,7 @@ class CreateOrdersTable extends Migration
             $table->unsignedDecimal('cost', 9, 2)->default(0.00)->comment('成本');
             $table->unsignedDecimal('profit', 9, 2)->default(0.00)->comment('利润');
             $table->date('date')->index()->comment('日期');
+            $table->string('status')->nullable()->comment('状态：pending,completed');
             $table->uuid('customer_id')->nullable()->index()->comment('购买人ID');
             $table->string('remark')->nullable()->comment('备注');
             $table->timestamps();

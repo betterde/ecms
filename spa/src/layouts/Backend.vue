@@ -11,8 +11,8 @@
           <el-menu :default-active="module" class="el-menu-nav" mode="horizontal" router>
             <el-menu-item index="/">数据分析</el-menu-item>
             <el-menu-item index="/order">订单管理</el-menu-item>
-            <el-menu-item index="/commodity">商品管理</el-menu-item>
-            <el-submenu index="2">
+            <el-menu-item v-if="profile.type === 'user'" index="/commodity">商品管理</el-menu-item>
+            <el-submenu v-if="profile.type === 'user'" index="2">
               <template slot="title">客户管理</template>
               <el-menu-item index="/invitation">注册管理</el-menu-item>
               <el-menu-item index="/customer">客户管理</el-menu-item>

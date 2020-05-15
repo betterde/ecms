@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Customer;
 use Exception;
 use App\Models\Order;
 use Illuminate\Http\Request;
@@ -32,6 +33,14 @@ class OrderController extends Controller
         $size = $request->get('size', 15);
         $query = Order::query();
 
+        $user = $request->user();
+        // 判断用户类型，如果是客户，只能查看自己的订单信息
+        if ($user instanceof Customer) {
+            $query->select(['id', 'total', 'discount', 'actual', 'date', 'status', 'remark'])
+                ->where('customer_id', $user->id)
+                ->where('type', '销售');
+        }
+
         $query->when($search = $request->get('search'), function (Builder $query, $search) {
             return $query->where('remark', 'like', "%$search%");
         });
@@ -45,7 +54,6 @@ class OrderController extends Controller
         });
 
         $query->orderByDesc('id');
-
         return success($query->paginate($size));
     }
 
@@ -58,14 +66,25 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
-        $attributes = $this->validate($request, [
-            'type' => 'required|in:采购,销售,邮费,满减,损耗',
-            'total' => 'required|money',
-            'discount' => 'required|integer',
-            'date' => 'required|date',
-            'remark' => 'nullable|string',
-            'customer_id' => 'nullable|uuid'
-        ]);
+        $user = $request->user();
+        if ($user instanceof Customer) {
+            $attributes['type'] = '销售';
+            $attributes['total'] = 0;
+            $attributes['date'] = date('Y-m-d');
+            $attributes['discount'] = $user->discount;
+            $attributes['status'] = 'pending';
+            $attributes['remark'] = $request->get('remark');
+            $attributes['customer_id'] = $user->id;
+        } else {
+            $attributes = $this->validate($request, [
+                'type' => 'required|in:采购,销售,邮费,满减,损耗',
+                'total' => 'required|money',
+                'discount' => 'required|integer',
+                'date' => 'required|date',
+                'remark' => 'nullable|string',
+                'customer_id' => 'nullable|uuid'
+            ]);
+        }
 
         if ($attributes['type'] === '邮费') {
             $attributes['actual'] = $attributes['total'];
@@ -89,6 +108,7 @@ class OrderController extends Controller
      */
     public function show(Order $order, Request $request)
     {
+        $user = $request->user();
         $scene = $request->get('scene', 'detail');
         switch ($scene) {
             case 'excel':
@@ -96,13 +116,16 @@ class OrderController extends Controller
                 return (new PurchasingListExport($order->id))->download($name, Excel::XLSX);
             case 'detail':
             default:
-                if ($order->customer_id) {
-                    $order->customer = $order->customer()->first();
+                if ($user instanceof Customer) {
+                    $order->setHidden([
+                        'type', 'cost', 'profit'
+                    ]);
                 } else {
-                    $order->customer = null;
+                    $order->customer = $order->customer()->first();
                 }
-            $order->tradings = $order->tradings()->get();
-            return success($order);
+                $order->tradings = $order->tradings()->get();
+                $order->logistic = $order->logistic()->first();
+                return success($order);
         }
     }
 
