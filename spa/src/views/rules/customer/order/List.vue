@@ -43,8 +43,9 @@
         <el-table-column prop="date" label="日期" sortable="custom"></el-table-column>
         <el-table-column prop="status" label="状态">
           <template slot-scope="scope">
-            <el-tag v-if="scope.row.status === 'pending'" size="small" type="info">待发货</el-tag>
-            <el-tag v-else size="small" type="success">已完成</el-tag>
+            <el-tag v-if="scope.row.status === 'pending'" size="small" type="info">待确认</el-tag>
+            <el-tag v-else-if="scope.row.status === 'confirmed'" size="small">已确认</el-tag>
+            <el-tag v-else size="small" type="success">已发货</el-tag>
           </template>
         </el-table-column>
         <el-table-column prop="remark" label="备注" min-width="100px"></el-table-column>

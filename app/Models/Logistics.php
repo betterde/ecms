@@ -18,6 +18,11 @@ class Logistics extends Model
 {
     protected $guarded = ['id'];
 
+    public function order()
+    {
+        return $this->belongsTo(Order::class, 'order_id', 'id');
+    }
+
     /**
      * 格式化日期数据
      *

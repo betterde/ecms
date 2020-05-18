@@ -12,6 +12,13 @@
         </el-row>
       </div>
     </div>
+    <div v-if="order.status !== null" class="panel-infix">
+      <el-steps :active="step" align-center finish-status="success">
+        <el-step title="完善信息" description="添加商品并填写收件人信息"></el-step>
+        <el-step title="确认订单" description="确认订单并付款后等待商家发货"></el-step>
+        <el-step title="已完成" description="商家已经发货可查询运单号"></el-step>
+      </el-steps>
+    </div>
     <el-dialog title="创建订单详情" :visible.sync="create.dialog" @close="handleClose('create')" width="600px"
                :close-on-click-modal="false">
       <el-form :model="create.params" :rules="create.rules" ref="create" label-position="top">
@@ -51,7 +58,7 @@
       </div>
     </el-dialog>
     <div class="panel-body" :class="classes">
-      <div class="details">
+      <div class="details" style="padding: 20px">
         <table>
           <tbody>
           <tr>
@@ -129,33 +136,120 @@
           </tbody>
         </table>
       </div>
-      <el-divider content-position="center">商品列表</el-divider>
-      <el-table v-loading="loading" :data="tradings" style="width: 100%" ref="pipeline">
-        <el-table-column prop="id" label="ID" min-width="100"></el-table-column>
-        <el-table-column prop="brand" label="品牌"></el-table-column>
-        <el-table-column prop="name" label="名称"></el-table-column>
-        <el-table-column prop="specification" label="规格"></el-table-column>
-        <el-table-column prop="unit" label="单位"></el-table-column>
-        <el-table-column prop="amount" label="数量"></el-table-column>
-        <el-table-column prop="price" label="单价"></el-table-column>
-        <el-table-column prop="total" label="总价"></el-table-column>
-        <el-table-column prop="option" label="操作" width="80">
-          <template slot-scope="scope">
-            <el-tooltip class="item" effect="dark" content="删除" placement="top">
-              <el-button size="mini" icon="el-icon-delete" type="danger" plain circle
-                         @click="handleDelete(scope.row)"></el-button>
-            </el-tooltip>
-          </template>
-        </el-table-column>
-      </el-table>
-      <div class="pagination">
-        <el-pagination background layout="sizes, total, prev, pager, next"
-                       :page-size="params.size" :page-sizes="meta.page_sizes"
-                       :current-page.sync="params.page" :total="meta.total"
-                       @current-change="handleCurrentChange"
-                       @size-change="handleSizeChange">
-        </el-pagination>
-      </div>
+      <el-tabs style="padding: 0 20px" v-model="active">
+        <el-tab-pane label="订单列表" name="order">
+          <el-table v-loading="loading" :data="tradings" style="width: 100%" ref="pipeline">
+            <el-table-column prop="id" label="ID" min-width="100"></el-table-column>
+            <el-table-column prop="brand" label="品牌"></el-table-column>
+            <el-table-column prop="name" label="名称"></el-table-column>
+            <el-table-column prop="specification" label="规格"></el-table-column>
+            <el-table-column prop="unit" label="单位"></el-table-column>
+            <el-table-column prop="amount" label="数量"></el-table-column>
+            <el-table-column prop="price" label="单价"></el-table-column>
+            <el-table-column prop="total" label="总价"></el-table-column>
+            <el-table-column prop="option" label="操作" width="80">
+              <template slot-scope="scope">
+                <el-tooltip class="item" effect="dark" content="删除" placement="top">
+                  <el-button size="mini" icon="el-icon-delete" type="danger" plain circle
+                             @click="handleDelete(scope.row)"></el-button>
+                </el-tooltip>
+              </template>
+            </el-table-column>
+          </el-table>
+          <div class="pagination">
+            <el-pagination background layout="sizes, total, prev, pager, next"
+                           :page-size="params.size" :page-sizes="meta.page_sizes"
+                           :current-page.sync="params.page" :total="meta.total"
+                           @current-change="handleCurrentChange"
+                           @size-change="handleSizeChange">
+            </el-pagination>
+          </div>
+        </el-tab-pane>
+        <el-tab-pane label="收件人信息" name="logistic">
+          <div v-if="order.logistic !== null" class="details">
+            <table>
+              <tbody>
+              <tr>
+                <td class="detail-item">
+                  <span class="detail-item-label detail-item-colon">收件人</span>
+                  <span class="detail-item-content">{{order.logistic.receiver}}</span>
+                </td>
+                <td class="detail-item">
+                  <span class="detail-item-label detail-item-colon">联系方式</span>
+                  <span class="detail-item-content">{{order.logistic.mobile}}
+                <el-tooltip class="item" effect="dark" content="发货时该号码会收到提醒" placement="top">
+                  <i class="el-icon-question"></i>
+                </el-tooltip>
+              </span>
+                </td>
+                <td class="detail-item">
+                  <span class="detail-item-label detail-item-colon">收件地址</span>
+                  <span class="detail-item-content">{{order.logistic.address}}</span>
+                </td>
+              </tr>
+              <tr>
+                <td class="detail-item">
+                  <span class="detail-item-label detail-item-colon">运单号</span>
+                  <span class="detail-item-content">{{order.logistic.number ? order.logistic.number : '暂无'}}
+                    <el-tooltip class="item" effect="dark" content="未发货状态无快递信息" placement="top">
+                      <i class="el-icon-question"></i>
+                    </el-tooltip>
+                  </span>
+                </td>
+                <td class="detail-item">
+                  <span class="detail-item-label detail-item-colon">快递公司</span>
+                  <span class="detail-item-content">{{order.logistic.company !== null ? order.logistic.company : '暂无'}}
+                    <el-tooltip class="item" effect="dark" content="未发货状态无快递信息" placement="top">
+                      <i class="el-icon-question"></i>
+                    </el-tooltip>
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td class="detail-item">
+                  <span class="detail-item-label detail-item-colon">备注</span>
+                  <span class="detail-item-content">{{order.logistic.remark === null ? '无备注' : order.remark}}</span>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </el-tab-pane>
+      </el-tabs>
+    </div>
+    <div v-if="order.status === 'confirmed'" class="panel-footer">
+      <el-dialog title="添加快递信息" :visible.sync="logistic.dialog" @close="handleClose('updateLogistic')" width="600px"
+                 :close-on-click-modal="false">
+        <el-form :model="logistic.params" :rules="logistic.rules" ref="updateLogistic" label-position="top">
+          <el-row :gutter="10">
+            <el-col :span="12">
+              <el-form-item label="快递公司" prop="company">
+                <el-select style="width: 100%" v-model="logistic.params.company" clearable placeholder="请选择公司名称">
+                  <el-option label="顺丰速运" value="顺丰速运"></el-option>
+                  <el-option label="百世快递" value="百世快递"></el-option>
+                  <el-option label="申通快递" value="申通快递"></el-option>
+                  <el-option label="中通快递" value="中通快递"></el-option>
+                  <el-option label="圆通速递" value="圆通速递"></el-option>
+                  <el-option label="韵达快递" value="韵达快递"></el-option>
+                  <el-option label="天天快递" value="天天快递"></el-option>
+                  <el-option label="京东快递" value="京东快递"></el-option>
+                  <el-option label="德邦快递" value="德邦快递"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="运单号" prop="number">
+                <el-input v-model="logistic.params.number" placeholder="请输入运单号"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="logistic.dialog = false">取消</el-button>
+          <el-button type="primary" @click="submit('updateLogistic')">确定</el-button>
+        </div>
+      </el-dialog>
+      <el-button :disabled="order.status !== 'confirmed'" style="float: right" type="primary" @click="logistic.dialog = true">确认发货</el-button>
     </div>
   </div>
 </template>
@@ -167,6 +261,8 @@
     name: "Detail",
     data() {
       return {
+        step: 0,
+        active: 'order',
         loading: false,
         classes: ['animated', 'fade-in', 'fast'],
         order: {
@@ -179,10 +275,26 @@
           profit: 0,
           actual: 0,
           remark: '',
+          logistic: null,
           created_at: ''
         },
         tradings: [],
         commodities: [],
+        logistic: {
+          dialog: false,
+          params: {
+            number: '',
+            company: '',
+          },
+          rules: {
+            number: [
+              {type: 'string', required: true, message: '请填写运单号', trigger: 'change'}
+            ],
+            company: [
+              {type: 'string', required: true, message: '请选择快递公司', trigger: 'blur'}
+            ]
+          }
+        },
         create: {
           amount: 0,
           dialog: false,
@@ -228,6 +340,20 @@
         if (this.$route.params.hasOwnProperty('id')) {
           api.order.fetchOrder(this.$route.params.id).then(res => {
             this.order = res.data;
+            switch (this.order.status) {
+              case 'pending':
+                this.step = 0;
+                break;
+              case 'confirmed':
+                this.step = 2;
+                break;
+              case 'completed':
+                this.step = 3;
+                break;
+              default:
+                this.step = 0;
+                break;
+            }
           }).catch(err => {
             this.$message.error({
               offset: 95,
@@ -294,9 +420,11 @@
         switch (form) {
           case 'create':
             this.$refs.create.resetFields();
-            this.create.dialog = false;
             break;
           case 'update':
+            break;
+          case 'updateLogistic':
+            this.$refs.updateLogistic.resetFields();
             break;
         }
       },
@@ -314,7 +442,7 @@
                   this.order.total += this.create.params.total;
                   this.fetchOrder();
                   this.fetchTradings();
-                  this.handleClose(action);
+                  this.create.dialog = false;
                 }).catch(err => {
                   this.$message.error({
                     offset: 95,
@@ -327,6 +455,27 @@
             });
             break;
           case 'update':
+            break;
+          case 'updateLogistic':
+            this.$refs.updateLogistic.validate((valid) => {
+              if (valid) {
+                api.logistics.updateNumber(this.order.logistic.id, this.logistic.params).then(res => {
+                  this.fetchOrder();
+                  this.$message.success({
+                    offset: 95,
+                    message: res.message
+                  });
+                  this.logistic.dialog = false;
+                }).catch(err => {
+                  this.$message.error({
+                    offset: 95,
+                    message: err.message
+                  });
+                });
+              } else {
+                return false;
+              }
+            });
             break;
         }
       },
@@ -391,7 +540,6 @@
 
 <style lang="scss">
   .details {
-    padding: 20px;
     width: 100%;
     font-size: 14px;
     table {
@@ -411,5 +559,8 @@
     .detail-item {
       padding-bottom: 20px;
     }
+  }
+  .statement {
+    text-align: center;
   }
 </style>

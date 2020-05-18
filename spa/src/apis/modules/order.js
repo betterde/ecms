@@ -25,6 +25,11 @@ export default {
   updateOrder(id, params) {
     return Vue.axios.put(`/api/order/${id}`, params)
   },
+  updateStatus(id, status) {
+    return Vue.axios.put(`/api/order/${id}/status`, {
+      status: status
+    });
+  },
   deleteOrder(id) {
     return Vue.axios.delete(`/api/order/${id}`);
   }

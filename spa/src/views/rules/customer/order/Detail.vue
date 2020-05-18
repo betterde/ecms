@@ -7,12 +7,19 @@
             <el-button type="info" plain @click="$router.back()">返回</el-button>
           </el-col>
           <el-col :span="12" style="text-align: right">
-            <el-button v-if="active === 'logistic' && order.logistic === null" @click="logistic.create.dialog = true">添加收件人</el-button>
-            <el-button v-if="active === 'logistic' && order.logistic !== null" @click="logisticEditHandler">编辑收件人</el-button>
-            <el-button v-if="active === 'order'" type="primary" plain @click="handleCreate">添加商品</el-button>
+            <el-button v-if="active === 'logistic' && step === 0 && order.logistic === null" @click="logistic.create.dialog = true">添加收件人</el-button>
+            <el-button v-if="active === 'logistic' && step === 0 && order.logistic !== null" @click="logisticEditHandler">编辑收件人</el-button>
+            <el-button v-if="active === 'order' && step === 0" type="primary" plain @click="handleCreate">添加商品</el-button>
           </el-col>
         </el-row>
       </div>
+    </div>
+    <div class="panel-infix">
+      <el-steps :active="step" align-center finish-status="success">
+        <el-step title="完善信息" description="添加商品并填写收件人信息"></el-step>
+        <el-step title="确认订单" description="确认订单并付款后等待商家发货"></el-step>
+        <el-step title="已完成" description="商家已经发货可查询运单号"></el-step>
+      </el-steps>
     </div>
     <el-dialog title="添加收件人" :visible.sync="logistic.create.dialog" @close="handleClose('createLogistic')" width="600px" :close-on-click-modal="false">
       <el-form :model="logistic.create.params" :rules="logistic.create.rules" ref="createLogistic" label-position="top">
@@ -129,7 +136,7 @@
       </div>
     </el-dialog>
     <div class="panel-body" :class="classes">
-      <div class="details">
+      <div class="details" style="padding: 20px">
         <table>
           <tbody>
           <tr>
@@ -188,7 +195,7 @@
             <el-table-column prop="amount" label="数量"></el-table-column>
             <el-table-column prop="price" label="单价"></el-table-column>
             <el-table-column prop="total" label="总价"></el-table-column>
-            <el-table-column prop="option" label="操作" width="80">
+            <el-table-column v-if="order.status === 'pending'" prop="option" label="操作" width="80">
               <template slot-scope="scope">
                 <el-tooltip class="item" effect="dark" content="删除" placement="top">
                   <el-button size="mini" icon="el-icon-delete" type="danger" plain circle
@@ -255,8 +262,14 @@
               </tbody>
             </table>
           </div>
+          <div v-else class="empty-box">
+            <p class="empty-message">暂无收件人信息，请添加收件人信息</p>
+          </div>
         </el-tab-pane>
       </el-tabs>
+    </div>
+    <div v-if="order.status === 'pending'" class="panel-footer">
+      <el-button style="float: right" type="primary" @click="confirmHandler">确认下单</el-button>
     </div>
   </div>
 </template>
@@ -268,6 +281,7 @@
     name: "Detail",
     data() {
       return {
+        step: 0,
         active: 'order',
         loading: false,
         classes: ['animated', 'fade-in', 'fast'],
@@ -383,6 +397,20 @@
         if (this.$route.params.hasOwnProperty('id')) {
           api.order.fetchOrder(this.$route.params.id).then(res => {
             this.order = res.data;
+            switch (this.order.status) {
+              case 'pending':
+                this.step = 0;
+                break;
+              case 'confirmed':
+                this.step = 2;
+                break;
+              case 'completed':
+                this.step = 3;
+                break;
+              default:
+                this.step = 0;
+                break;
+            }
           }).catch(err => {
             this.$message.error({
               offset: 95,
@@ -550,6 +578,48 @@
             break;
         }
       },
+      confirmHandler() {
+        if (this.tradings.length === 0) {
+          this.$message.error({
+            offset: 68,
+            message: '请添加需要采购的商品'
+          });
+          return false;
+        }
+
+        if (this.order.logistic === null) {
+          this.$message.error({
+            offset: 68,
+            message: '请添加收件人信息'
+          });
+          return false;
+        }
+
+        this.$confirm('确认订单后商家将按订单发货，订单将不能随意修改?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          api.order.updateStatus(this.order.id, 'confirmed').then(res => {
+            this.step += 2;
+            this.order.status = res.data.status;
+            this.$message.success({
+              offset: 95,
+              message: res.message
+            });
+          }).catch(err => {
+            this.$message.error({
+              offset: 95,
+              message: err.message
+            });
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消'
+          });
+        });
+      },
       changeCommodity(id) {
         this.commodities.forEach((group) => {
           group.options.forEach((commodity) => {
@@ -611,7 +681,6 @@
 
 <style lang="scss">
   .details {
-    padding: 20px;
     width: 100%;
     font-size: 14px;
     table {
@@ -633,5 +702,12 @@
     }
   }
   .logistics {
+  }
+  .empty-box {
+    padding: 20px;
+    text-align: center;
+  }
+  .empty-message {
+    color: #C0C4CC;
   }
 </style>

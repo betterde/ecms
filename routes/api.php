@@ -37,6 +37,7 @@ Route::group(['middleware' => 'auth:users,customer'], function () {
     Route::get('commodity/unit', 'CommodityController@unit');
     Route::post('commodity/image', 'CommodityController@image');
     Route::apiResource('commodity', 'CommodityController');
+    Route::put('order/{order}/status', 'OrderController@status');
     Route::apiResource('order', 'OrderController');
     Route::post('profile/avatar', 'ProfileController@avatar');
     Route::post('profile/password', 'ProfileController@password');
@@ -44,6 +45,7 @@ Route::group(['middleware' => 'auth:users,customer'], function () {
     Route::get('profile/{user}', 'ProfileController@show');
     Route::put('profile/{user}', 'ProfileController@update');
     Route::apiResource('invitation', 'InvitationController')->except('update');
+    Route::put('logistics/{logistic}/number', 'LogisticsController@number');
     Route::apiResource('logistics', 'LogisticsController');
 });
 

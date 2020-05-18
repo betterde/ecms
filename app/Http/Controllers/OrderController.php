@@ -152,6 +152,23 @@ class OrderController extends Controller
     }
 
     /**
+     * Date: 2020/5/18
+     * @param Order $order
+     * @param Request $request
+     * @return JsonResponse
+     * @author George
+     */
+    public function status(Order $order, Request $request)
+    {
+        $attributes = $request->validate([
+            'status' => 'required|in:pending,confirmed,completed'
+        ]);
+
+        $order->update($attributes);
+        return updated($order);
+    }
+
+    /**
      * Remove the specified resource from storage.
      *
      * @param Order $order
