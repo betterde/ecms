@@ -74,6 +74,25 @@ class LogisticsController extends Controller
     }
 
     /**
+     * Date: 2020/5/18
+     * @param Logistics $logistic
+     * @param Request $request
+     * @return JsonResponse
+     * @author George
+     */
+    public function number(Logistics $logistic, Request $request)
+    {
+        $attributes = $request->validate([
+            'number' => 'required|string',
+            'company' => 'required|string'
+        ]);
+
+        $logistic->order()->update(['status' => 'completed']);
+        $logistic->update($attributes);
+        return updated($logistic);
+    }
+
+    /**
      * Remove the specified resource from storage.
      *
      * @param  int  $id

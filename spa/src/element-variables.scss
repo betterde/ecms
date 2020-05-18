@@ -86,12 +86,21 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
     .panel-header {
       padding: 20px;
       min-height: 60px;
-      background-color: #FFFFFF;
       border-radius: 4px;
+      background-color: #FFFFFF;
       box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
       .panel-tools {
         text-align: left;
       }
+    }
+
+    .panel-infix {
+      padding: 20px;
+      margin-top: 20px;
+      min-height: 60px;
+      border-radius: 4px;
+      background-color: #FFFFFF;
+      box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
     }
 
     .panel-body {
@@ -108,6 +117,7 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
     .panel-footer {
       margin: 20px 0;
       padding: 20px;
+      min-height: 80px;
       background-color: #FFFFFF;
       border-radius: 4px;
       box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);

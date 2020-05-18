@@ -6,5 +6,8 @@ export default {
   },
   update(id, params) {
     return Vue.axios.put(`/api/logistics/${id}`, params);
+  },
+  updateNumber(id, params) {
+    return Vue.axios.put(`/api/logistics/${id}/number`, params);
   }
 }
