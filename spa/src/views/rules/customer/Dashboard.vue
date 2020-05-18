@@ -1,6 +1,56 @@
 <template>
   <div class="main-content">
-    <h1>Hello</h1>
+    <div class="panel">
+      <el-row :gutter="20">
+        <el-col :span="6" :xs="12">
+          <div class="card" :class="classes">
+            <div class="card_body">
+              <h1 class="number">{{summary.total}}</h1>
+            </div>
+            <div class="card_footer">
+              <h4>总订单数</h4>
+            </div>
+          </div>
+        </el-col>
+        <el-col :span="6" :xs="12">
+          <div class="card" :class="classes">
+            <div class="card_body">
+              <h1 class="number">{{summary.pending}}</h1>
+            </div>
+            <div class="card_footer">
+              <h4>待确认</h4>
+            </div>
+          </div>
+        </el-col>
+        <el-col :span="6" :xs="12">
+          <div class="card" :class="classes">
+            <div class="card_body">
+              <h1 class="number">{{summary.confirmed}}</h1>
+            </div>
+            <div class="card_footer">
+              <h4>待发货</h4>
+            </div>
+          </div>
+        </el-col>
+        <el-col :span="6" :xs="12">
+          <div class="card" :class="classes">
+            <div class="card_body">
+              <h1 class="number">{{summary.completed}}</h1>
+            </div>
+            <div class="card_footer">
+              <h4>已发货</h4>
+            </div>
+          </div>
+        </el-col>
+      </el-row>
+    </div>
+    <div class="panel" style="margin-top: 20px">
+      <el-row :gutter="20">
+        <el-col :span="24">
+          <div id="chart" class="card" style="padding: 20px;" :class="classes"></div>
+        </el-col>
+      </el-row>
+    </div>
   </div>
 </template>
 
@@ -14,16 +64,12 @@
       return {
         classes: ['animated', 'fade-in', 'fast'],
         summary: {
-          day: 0,
-          month: 0,
-          daily_turnover: 0.00,
-          daily_profit: 0.00,
-          inventory_cost: 0.00,
-          purchasing_cost: 0.00,
-          sales_amount: 0.00,
-          gross_profit: 0.00,
-          tendency: [],
-          order_quantity: []
+          total: 0,
+          pending: 0,
+          confirmed: 0,
+          completed: 0,
+          expense: [],
+          quantity: []
         },
         date: new Date(),
       }
@@ -66,7 +112,7 @@
         balance.legend({
           position: 'top',
         })
-        balance.data(this.summary.tendency);
+        balance.data(this.summary.expense);
         balance.interaction('tooltip');
         balance.interaction('sibling-tooltip');
         balance.scale({
@@ -75,6 +121,8 @@
           },
           actual: {
             nice: true,
+            alias: '成本',
+            type: 'linear'
           },
         });
 
@@ -107,7 +155,7 @@
           },
           padding: [0, 20, 40, 60]
         });
-        quantity.data(this.summary.order_quantity);
+        quantity.data(this.summary.quantity);
         quantity.interaction('tooltip');
         quantity.interaction('sibling-tooltip');
         quantity.scale({
@@ -116,7 +164,7 @@
           },
           quantity: {
             nice: true,
-            alias: '销量',
+            alias: '采购订单',
             type: 'linear',
             tickInterval: 1
           },
