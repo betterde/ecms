@@ -88,6 +88,13 @@ router.beforeEach((to, from, next) => {
     store.commit('SET_LAYOUT_CURRENT', 'guest');
   }
 
+  // 避免因为用户未登录访问首页被跳转到 404 页面
+  if (to.fullPath === '/' && to.name === 'notfound') {
+    next({
+      path: '/signin'
+    })
+  }
+
   // 如果从NotFound 页面返回，并且需要认证的话，则设置视图的Layout 为 backend
   if (from.name === 'notfound' && to.meta.requiresAuth === true) {
     store.commit('SET_LAYOUT_CURRENT', 'backend')
@@ -99,9 +106,7 @@ router.beforeEach((to, from, next) => {
     })
   }
 
-  /**
-   * Determine if auth is required
-   */
+  // 验证路由是否需要用户认证
   if (to.matched.some(record => record.meta.requiresAuth)) {
     //通过access_token判断用户是否已经登录
     if (store.state.account.access_token === null) {
