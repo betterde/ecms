@@ -45,6 +45,9 @@ class Commodity extends Model
      */
     public function getImageAttribute($image)
     {
+        if ($image === null) {
+            return null;
+        }
         return url($image);
     }
 
