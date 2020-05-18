@@ -87,7 +87,6 @@
   export default {
     name: 'OrderList',
     data() {
-      let date = new Date();
       return {
         classes: ['animated', 'fade-in', 'fast'],
         loading: false,

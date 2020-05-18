@@ -1,4 +1,4 @@
-swagger: "2.0"
+openapi: 3.0.3
 info:
   title: ECMS
   description: ECMS API documents
@@ -6,10 +6,11 @@ info:
   license:
     name: MIT
     url: https://github.com/betterde/ecms/blob/master/LICENSE
-host: ecms.betterde.com
-schemes:
-  - http
-  - https
+servers:
+  - url: https://ecms.betterde.com
+    description: Production server
+  - url: https://ecms.it
+    description: Develop server
 tags:
   - name: Order
     description: Order API
@@ -22,8 +23,6 @@ paths:
         - User
       summary: Returns a list of users.
       description: Optional extended description in Markdown.
-      produces:
-        - application/json
       responses:
         200:
           description: OK
@@ -33,59 +32,20 @@ paths:
         - Order
       summary: Returns a list of orders.
       description: Optional extended description in Markdown.
-      produces:
-        - application/json
       parameters:
         - name: date
           in: query
           required: false
-          type: string
           description: Date string
       responses:
-        200:
-          schema:
-            $ref: '#/definitions/Orders'
+        '200':
           description: Success
-definitions:
-  Order:
-    required:
-      - id
-    properties:
-      id:
-        type: integer
-      type:
-        type: string
-      total:
-        type: number
-      discount:
-        type: number
-      actual:
-        type: number
-      cost:
-        type: number
-      profit:
-        type: number
-      date:
-        type: string
-      customer_id:
-        type: string
-      remark:
-        type: string
-  Orders:
-    type: array
-    items:
-      $ref: '#/definitions/Order'
-  User:
-    required:
-      - id
-    properties:
-      id:
-        type: integer
-      name:
-        type: string
-      email:
-        type: string
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+security:
+  - bearerAuth: []
 
-responses:
-  Success:
-    description: Success response
