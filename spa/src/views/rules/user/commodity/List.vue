@@ -35,7 +35,7 @@
       <el-form :model="create.params" :rules="create.rules" ref="create" label-position="top">
         <el-row :gutter="10">
           <el-col :span="24" style="text-align: center">
-            <el-upload class="avatar-uploader" name="image" action="/api/commodity/image" :headers="upload.headers" :show-file-list="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
+            <el-upload class="avatar-uploader" name="image" action="/api/commodity/image" :headers="upload.headers" :show-file-list="false" :on-success="handleCreateUploadSuccess">
               <img v-if="create.params.image" :src="create.params.image" class="avatar">
               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             </el-upload>
@@ -89,7 +89,7 @@
       <el-form :model="update.params" :rules="update.rules" ref="update" label-position="top">
         <el-row :gutter="10">
           <el-col :span="24" style="text-align: center">
-            <el-upload class="avatar-uploader" name="image" action="/api/commodity/image" :headers="upload.headers" :show-file-list="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
+            <el-upload class="avatar-uploader" name="image" action="/api/commodity/image" :headers="upload.headers" :show-file-list="false" :on-success="handleUpdateUploadSuccess">
               <img v-if="update.params.image" :src="update.params.image" class="avatar">
               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             </el-upload>
@@ -326,21 +326,23 @@
         switch (form) {
           case 'create':
             this.$refs.create.resetFields();
-            this.create.dialog = false;
+            this.create.params.image = '';
             break;
           case 'update':
             this.$refs.update.resetFields();
-            this.update.dialog = false;
+            this.update.params.image = '';
             this.update.id = null;
             this.update.index = null;
             break;
         }
       },
-      handleAvatarSuccess(res) {
-        this.create.params.image = 'http://ecms.it' + res.data;
+      handleCreateUploadSuccess(res) {
+        let location = window.location;
+        this.create.params.image = `${location.protocol}//${location.host + res.data}`;
       },
-      beforeAvatarUpload() {
-
+      handleUpdateUploadSuccess(res) {
+        let location = window.location;
+        this.update.params.image = `${location.protocol}//${location.host + res.data}`;
       },
       /**
        * Submit form
@@ -357,7 +359,7 @@
                     message: res.message
                   });
                   this.fetchCommodities();
-                  this.handleClose(form);
+                  this.create.dialog = false;
                 }).catch(err => {
                   this.$message.error({
                     offset: 95,
@@ -376,7 +378,7 @@
                 message: res.message
               });
               this.fetchCommodities();
-              this.handleClose(form);
+              this.update.dialog = false;
             }).catch(err => {
               this.$message.error({
                 offset: 95,
