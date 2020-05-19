@@ -37,6 +37,7 @@ Route::group(['middleware' => 'auth:users,customer'], function () {
     Route::get('commodity/unit', 'CommodityController@unit');
     Route::post('commodity/image', 'CommodityController@image');
     Route::apiResource('commodity', 'CommodityController');
+    Route::apiResource('discount', 'DiscountController');
     Route::put('order/{order}/status', 'OrderController@status');
     Route::apiResource('order', 'OrderController');
     Route::post('profile/avatar', 'ProfileController@avatar');
@@ -48,7 +49,3 @@ Route::group(['middleware' => 'auth:users,customer'], function () {
     Route::put('logistics/{logistic}/number', 'LogisticsController@number');
     Route::apiResource('logistics', 'LogisticsController');
 });
-
-//Route::middleware('auth:users,customer')->get('/user', function (Request $request) {
-//    return $request->user();
-//});

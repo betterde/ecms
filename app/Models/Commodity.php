@@ -64,6 +64,18 @@ class Commodity extends Model
     }
 
     /**
+     * Define discount relation
+     *
+     * Date: 2020/5/19
+     * @return HasMany
+     * @author George
+     */
+    public function discounts()
+    {
+        return $this->hasMany(Discount::class, 'commodity_id', 'id');
+    }
+
+    /**
      * Date: 2020/5/15
      * @param DateTimeInterface $dateTime
      * @return string

@@ -168,6 +168,7 @@ class CommodityController extends Controller
     public function show(Commodity $commodity)
     {
         $commodity->pricings = $commodity->pricings()->get();
+        $commodity->discounts = $commodity->discounts()->get();
         return success($commodity);
     }
 

@@ -77,7 +77,7 @@
           </el-col>
         </el-row>
         <el-form-item label="描述" prop="description">
-          <el-input v-model="create.params.description" autocomplete="off" placeholder="请输商品描述信息"></el-input>
+          <el-input v-model="create.params.description" :loading="loading" autocomplete="off" placeholder="请输商品描述信息"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -140,7 +140,7 @@
       </div>
     </el-dialog>
     <div class="panel-body" :class="classes">
-      <el-table v-loading="loading" :data="inventories" @sort-change="changeSort" style="width: 100%" ref="pipeline">
+      <el-table v-loading="loading" :data="inventories" @sort-change="changeSort" style="width: 100%">
         <el-table-column label="图片">
           <template slot-scope="scope">
             <el-image style="width: 80px; height: 80px" :src="scope.row.image" fit="cover"></el-image>
@@ -353,7 +353,9 @@
           case 'create':
             this.$refs.create.validate((valid) => {
               if (valid) {
+                this.loading = true;
                 api.commodity.createCommodity(this.create.params).then(res => {
+                  this.loading = false;
                   this.$message.success({
                     offset: 95,
                     message: res.message
@@ -361,6 +363,7 @@
                   this.fetchCommodities();
                   this.create.dialog = false;
                 }).catch(err => {
+                  this.loading = false;
                   this.$message.error({
                     offset: 95,
                     message: err.message

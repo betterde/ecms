@@ -165,7 +165,7 @@
             </el-pagination>
           </div>
         </el-tab-pane>
-        <el-tab-pane label="收件人信息" name="logistic">
+        <el-tab-pane v-if="order.customer !== null" label="收件人信息" name="logistic">
           <div v-if="order.logistic !== null" class="details">
             <table>
               <tbody>

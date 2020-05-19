@@ -7,10 +7,17 @@ use App\Models\Customer;
 use Carbon\CarbonPeriod;
 use App\Models\Commodity;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class DashboardController extends Controller
 {
+    /**
+     * Date: 2020/5/19
+     * @param Request $request
+     * @return JsonResponse
+     * @author George
+     */
     public function index(Request $request)
     {
         $start = strtotime('-30 day');
@@ -87,6 +94,7 @@ class DashboardController extends Controller
 
             return success($summary);
         }
+
         $inventory_cost = 0;
         $commodities = Commodity::with(['pricings' => function(HasMany $query) {
             $query->where('amount', '>', 0);
