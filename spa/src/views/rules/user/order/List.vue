@@ -35,7 +35,7 @@
         <el-row :gutter="10">
           <el-col :span="12">
             <el-form-item label="类型" prop="type">
-              <el-select v-model="create.params.type" clearable filterable placeholder="请选择类型" style="width: 100%">
+              <el-select v-model="create.params.type" clearable placeholder="请选择类型" style="width: 100%">
                 <el-option label="采购" value="采购"></el-option>
                 <el-option label="销售" value="销售"></el-option>
                 <el-option label="邮费" value="邮费"></el-option>
@@ -222,7 +222,7 @@
       submit(form){
         switch (form) {
           case 'create':
-            this.$refs.create.validate((valid) => {
+            this.$refs.create.validate(valid => {
               if (valid) {
                 api.order.createOrder(this.create.params).then(res => {
                   let type = this.create.params.type;
