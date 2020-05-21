@@ -25,7 +25,7 @@ class IndexController extends Controller
         if (View::exists($view)) {
             return view($view);
         } else {
-            return message('首页不存在，请安装前端依赖并执行 yarn build 命令，完成后即可访问。', 404);
+            return message('首页不存在，请安装前端依赖并执行 yarn build 命令，完成后即可访问。');
         }
     }
 }
