@@ -31,6 +31,8 @@ class DiscountController extends Controller
             return $query->where('commodity_id', $commodity_id);
         });
 
+        $query->orderByDesc('number');
+
         $discounts = $query->get();
         return success($discounts);
     }
