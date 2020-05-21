@@ -137,7 +137,7 @@
         this.create.dialog = true;
       },
       handleClear() {
-
+        this.fetchCustomers();
       },
       submit() {
         api.customer.createCustomer(this.create.params).then(() => {

@@ -132,7 +132,7 @@ class DashboardController extends Controller
             ->whereIn('type', ['采购', '邮费'])
             ->whereBetween('date', [$startDate, $endDate])
             ->groupBy('date')->get();
-        
+
         $dailyOrders = Order::selectRaw('date, count(id) as quantity')
             ->where('type', '销售')
             ->whereBetween('date', [$startDate, $endDate])

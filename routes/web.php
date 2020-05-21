@@ -1,7 +1,5 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -13,4 +11,4 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::view('{path?}', 'index')->where('path', '[\/\w\.-]*');
+Route::get('{path?}', 'IndexController@index')->where('path', '[\/\w\.-]*');
