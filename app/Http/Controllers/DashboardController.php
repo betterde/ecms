@@ -55,9 +55,10 @@ class DashboardController extends Controller
 
             $dailyExpend = Order::selectRaw('date, sum(actual) as actual')
                 ->where('customer_id', $user->id)
-                ->where('type', '采购')
+                ->where('type', '销售')
                 ->whereBetween('date', [$startDate, $endDate])
                 ->groupBy('date')->get();
+
             $dailyOrders = Order::selectRaw('date, count(id) as quantity')
                 ->where('customer_id', $user->id)
                 ->where('type', '销售')
