@@ -34,3 +34,4 @@ bindata.go
 *.sln
 *.sw*
 yarn.lock
+/resources/views/index.blade.php
