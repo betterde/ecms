@@ -13,9 +13,9 @@ module.exports = {
   },
   outputDir: 'public',
   indexPath: process.env.NODE_ENV === 'production' ? '../resources/views/index.blade.php' : 'index.html',
-  configureWebpack: {
-
-  },
+  // configureWebpack: {
+  //
+  // },
   devServer: {
     // host: 'ecms.betterde.com',
     // port: 443,
