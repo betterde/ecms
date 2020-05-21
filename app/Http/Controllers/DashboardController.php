@@ -54,10 +54,12 @@ class DashboardController extends Controller
             }
 
             $dailyExpend = Order::selectRaw('date, sum(actual) as actual')
+                ->where('customer_id', $user->id)
                 ->where('type', '采购')
                 ->whereBetween('date', [$startDate, $endDate])
                 ->groupBy('date')->get();
             $dailyOrders = Order::selectRaw('date, count(id) as quantity')
+                ->where('customer_id', $user->id)
                 ->where('type', '销售')
                 ->whereBetween('date', [$startDate, $endDate])
                 ->groupBy('date')->get();
@@ -121,9 +123,20 @@ class DashboardController extends Controller
             'tendency' => [],
         ];
 
-        $dailyIncome = Order::selectRaw('date, sum(actual) as actual, sum(profit) as profit')->where('type', '销售')->whereBetween('date', [$startDate, $endDate])->groupBy('date')->get();
-        $dailyExpend = Order::selectRaw('date, sum(actual) as actual')->whereIn('type', ['采购', '邮费'])->whereBetween('date', [$startDate, $endDate])->groupBy('date')->get();
-        $dailyOrders = Order::selectRaw('date, count(id) as quantity')->where('type', '销售')->whereBetween('date', [$startDate, $endDate])->groupBy('date')->get();
+        $dailyIncome = Order::selectRaw('date, sum(actual) as actual, sum(profit) as profit')
+            ->where('type', '销售')
+            ->whereBetween('date', [$startDate, $endDate])
+            ->groupBy('date')->get();
+
+        $dailyExpend = Order::selectRaw('date, sum(actual) as actual')
+            ->whereIn('type', ['采购', '邮费'])
+            ->whereBetween('date', [$startDate, $endDate])
+            ->groupBy('date')->get();
+        
+        $dailyOrders = Order::selectRaw('date, count(id) as quantity')
+            ->where('type', '销售')
+            ->whereBetween('date', [$startDate, $endDate])
+            ->groupBy('date')->get();
 
         foreach ($period as $carbon) {
             $in = 0;
