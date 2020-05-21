@@ -229,6 +229,11 @@
         quantity.line().position('date*quantity').color('#6A6873').shape('smooth');
         quantity.point().position('date*quantity').color('#6A6873').shape('circle');
         chart.render();
+      }).catch(err => {
+        this.$message.error({
+          offset: 95,
+          message: err.message
+        });
       });
     }
   }
