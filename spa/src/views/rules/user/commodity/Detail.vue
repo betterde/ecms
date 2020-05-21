@@ -197,6 +197,7 @@
                 },
               });
 
+              this.tendency.area().position('date*buying').shape('smooth');
               this.tendency
                 .line()
                 .position('date*buying')

@@ -158,7 +158,7 @@
               <el-button size="mini" icon="el-icon-edit" circle
                          @click="handleEdit(scope.row)"></el-button>
             </el-tooltip>
-            <el-tooltip class="item" effect="dark" content="趋势" placement="top">
+            <el-tooltip class="item" effect="dark" content="详情" placement="top">
               <el-button size="mini" icon="el-icon-tickets" plain circle
                          @click="viewTrend(scope.row)"></el-button>
             </el-tooltip>
