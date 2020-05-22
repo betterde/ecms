@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
-use DateTimeInterface;
+use App\Contracts\UserTypeInterface;
 use Eloquent;
+use DateTimeInterface;
+use App\Traits\HasUserType;
 use Illuminate\Support\Carbon;
 use App\Notifications\ResetPassword;
 use Tymon\JWTAuth\Contracts\JWTSubject;
@@ -41,9 +43,9 @@ use Illuminate\Notifications\DatabaseNotificationCollection;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereUpdatedAt($value)
  * @mixin Eloquent
  */
-class User extends Authenticatable implements MustVerifyEmail, JWTSubject
+class User extends Authenticatable implements MustVerifyEmail, JWTSubject, UserTypeInterface
 {
-    use Notifiable, \Illuminate\Auth\MustVerifyEmail;
+    use Notifiable, HasUserType, \Illuminate\Auth\MustVerifyEmail;
 
     /**
      * @var bool $incrementing

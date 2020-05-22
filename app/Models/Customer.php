@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Contracts\UserTypeInterface;
+use App\Traits\HasUserType;
 use DateTimeInterface;
 use Illuminate\Support\Carbon;
 use Tymon\JWTAuth\Contracts\JWTSubject;
@@ -52,9 +54,9 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  * @method static Builder|Customer whereVip($value)
  * @mixin \Eloquent
  */
-class Customer extends Authenticatable implements JWTSubject
+class Customer extends Authenticatable implements JWTSubject, UserTypeInterface
 {
-    use Notifiable;
+    use Notifiable, HasUserType;
 
     /**
      * @var string $primaryKey
