@@ -2,6 +2,7 @@
 
 namespace App\Http;
 
+use App\Http\Middleware\Journal;
 use App\Http\Middleware\VerifyContentType;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
@@ -31,6 +32,7 @@ class Kernel extends HttpKernel
         'api' => [
             'throttle:60,1',
             'bindings',
+            'journal'
         ],
     ];
 
@@ -52,6 +54,7 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'verifyJSON' => VerifyContentType::class,
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
+        'journal' => Journal::class
     ];
 
     /**
