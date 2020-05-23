@@ -1,23 +1,27 @@
-import account from './modules/account';
-import dashboard from './modules/dashboard';
-import customer from "./modules/customer";
-import trading from  './modules/trading';
+import user from './modules/user';
 import order from './modules/order';
-import commodity from "./modules/commodity";
-import system from "./modules/system";
-import invitation from "./modules/invitation";
-import logistics from "./modules/logistics";
-import discount from "./modules/discount";
+import system from './modules/system';
+import account from './modules/account';
+import journal from './modules/journal';
+import trading from  './modules/trading';
+import customer from "./modules/customer";
+import discount from './modules/discount';
+import logistics from './modules/logistics';
+import dashboard from './modules/dashboard';
+import commodity from './modules/commodity';
+import invitation from './modules/invitation';
 
 export default {
-  account,
-  dashboard,
-  customer,
-  trading,
+  user,
   order,
-  commodity,
   system,
-  invitation,
+  account,
+  journal,
+  trading,
+  customer,
+  discount,
   logistics,
-  discount
+  dashboard,
+  commodity,
+  invitation
 }

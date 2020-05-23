@@ -78,6 +78,26 @@ function registration(type) {
           rules: ['user', 'customer']
         },
         component: () => import('../views/rules/user/Profile.vue')
+      },
+      {
+        path: '/journal',
+        name: 'journal',
+        meta: {
+          requiresAuth: true,
+          rules: ['user']
+        },
+        component: () => import('../views/rules/user/journal/Index.vue'),
+        children: [
+          {
+            path: ':id/detail',
+            name: 'journalDetail',
+            meta: {
+              requiresAuth: true,
+              rules: ['user']
+            },
+            component: () => import('../views/rules/user/journal/Detail.vue')
+          }
+        ]
       }
     ];
   } else {
