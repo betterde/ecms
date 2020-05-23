@@ -4,9 +4,9 @@ namespace App\Models;
 
 use Eloquent;
 use DateTimeInterface;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 /**
  * User journal model
@@ -31,6 +31,11 @@ class Journal extends Model
         'params' => 'json'
     ];
 
+    /**
+     * Define user operation list
+     *
+     * @var array[] $actions
+     */
     protected static $actions = [
         'order' => [
             'target' => '订单',
@@ -78,6 +83,38 @@ class Journal extends Model
                 'POST' => '创建',
                 'PUT' => '修改',
                 'DELETE' => '删除'
+            ]
+        ],
+        'commodity/image' => [
+            'target' => '商品图片',
+            'actions' => [
+                'POST' => '上传'
+            ]
+        ],
+        'discount' => [
+            'target' => '商品价格',
+            'actions' => [
+                'POST' => '创建',
+                'PUT' => '修改',
+                'DELETE' => '删除'
+            ]
+        ],
+        'profile/address' => [
+            'target' => '客户地址',
+            'actions' => [
+                'POST' => '修改'
+            ]
+        ],
+        'profile/avatar' => [
+            'target' => '客户头像',
+            'actions' => [
+                'POST' => '上传'
+            ]
+        ],
+        'profile/password' => [
+            'target' => '用户密码',
+            'actions' => [
+                'POST' => '修改'
             ]
         ],
         'auth/signin' => [

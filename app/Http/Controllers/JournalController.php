@@ -4,11 +4,25 @@ namespace App\Http\Controllers;
 
 use App\Models\Journal;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
+/**
+ * Operation journal controller
+ *
+ * Date: 2020/5/23
+ * @author George
+ * @package App\Http\Controllers
+ */
 class JournalController extends Controller
 {
+    /**
+     * Date: 2020/5/23
+     * @param Request $request
+     * @return JsonResponse
+     * @author George
+     */
     public function index(Request $request)
     {
         $size = $request->get('size', 15);
@@ -45,6 +59,12 @@ class JournalController extends Controller
         return success($query->paginate($size));
     }
 
+    /**
+     * Date: 2020/5/23
+     * @param Journal $journal
+     * @return JsonResponse
+     * @author George
+     */
     public function show(Journal $journal)
     {
         $journal->journalable = $journal->journalable()->first();

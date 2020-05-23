@@ -49,5 +49,5 @@ Route::group(['middleware' => 'auth:users,customer'], function () {
     Route::apiResource('invitation', 'InvitationController')->except('update');
     Route::put('logistics/{logistic}/number', 'LogisticsController@number');
     Route::apiResource('logistics', 'LogisticsController');
-    Route::apiResource('journal', 'JournalController')->except(['post', 'put', 'patch']);
+    Route::apiResource('journal', 'JournalController')->except(['store', 'update', 'destroy']);
 });
