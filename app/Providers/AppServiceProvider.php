@@ -5,7 +5,6 @@ namespace App\Providers;
 use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Customer;
-use DateTimeInterface;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Database\Eloquent\Relations\Relation;

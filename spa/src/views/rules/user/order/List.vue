@@ -77,7 +77,7 @@
       </div>
     </el-dialog>
     <div class="panel-body" :class="classes">
-      <el-table v-loading="loading" :data="orders" @sort-change="changeSort" style="width: 100%" ref="pipeline">
+      <el-table v-loading="loading" :data="orders" @sort-change="changeSort" style="width: 100%">
         <el-table-column prop="id" label="ID" min-width="80"></el-table-column>
         <el-table-column prop="type" label="类型"></el-table-column>
         <el-table-column prop="total" label="总价"></el-table-column>

@@ -27,7 +27,8 @@ class CustomerController extends Controller
         $descend = (boolean)$request->post('descend', true);
         $query = Customer::query();
         $query->when($search = $request->get('search'), function (Builder $query, $search) {
-            return $query->where('name', 'like', "%$search%");
+            return $query->where('name', 'like', "%$search%")
+                ->orWhere('email', 'like', "%$search%");
         });
 
         switch ($scene) {

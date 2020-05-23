@@ -31,6 +31,8 @@ class OrderController extends Controller
     public function index(Request $request)
     {
         $size = $request->get('size', 15);
+        $sort = $request->get('sort', 'id');
+        $descend = (boolean)$request->get('descend', false);
         $query = Order::query();
 
         $user = $request->user();
@@ -53,7 +55,12 @@ class OrderController extends Controller
             return $query->whereDate('date', $date);
         });
 
-        $query->orderByDesc('id');
+        if ($descend) {
+            $query->orderByDesc($sort);
+        } else{
+            $query->orderBy($sort);
+        }
+
         return success($query->paginate($size));
     }
 

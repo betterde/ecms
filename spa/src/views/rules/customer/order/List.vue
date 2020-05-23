@@ -33,7 +33,7 @@
       </div>
     </el-dialog>
     <div class="panel-body" :class="classes">
-      <el-table v-loading="loading" :data="orders" @sort-change="changeSort" style="width: 100%" ref="pipeline">
+      <el-table v-loading="loading" :data="orders" @sort-change="changeSort" style="width: 100%">
         <el-table-column prop="id" label="ID" min-width="80"></el-table-column>
         <el-table-column prop="total" label="总价"></el-table-column>
         <el-table-column prop="discount" label="折扣">
@@ -98,7 +98,7 @@
           search: '',
           type: '',
           date: null,
-          descend: 0,
+          descend: 1,
           current_page: 1
         },
         create: {

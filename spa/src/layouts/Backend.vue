@@ -26,6 +26,7 @@
           </span>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item command="profile">个人信息</el-dropdown-item>
+              <el-dropdown-item command="journal">操作日志</el-dropdown-item>
               <el-dropdown-item command="signOut">退出登陆</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
@@ -60,6 +61,9 @@
             break;
           case 'profile':
             this.$router.push({path: '/profile'});
+            break;
+          case 'journal':
+            this.$router.push({path: '/journal'});
             break;
         }
       },
