@@ -15,7 +15,7 @@ class CreateJournalsTable extends Migration
     {
         Schema::create('journals', function (Blueprint $table) {
             $table->id();
-            $table->string('user_id')->index()->comment('用户ID');
+            $table->uuid('user_id')->index()->comment('用户ID');
             $table->string('user_type')->comment('用户类型:user,customer');
             $table->string('action')->comment('动作类型');
             $table->string('target')->nullable()->comment('操作对象');
