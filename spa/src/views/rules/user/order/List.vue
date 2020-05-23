@@ -143,7 +143,7 @@
           search: '',
           type: '',
           date: null,
-          descend: 0,
+          descend: 1,
           current_page: 1
         },
         create: {
