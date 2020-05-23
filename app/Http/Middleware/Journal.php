@@ -31,6 +31,12 @@ class Journal
         if ($user && in_array($request->method(), ['POST', 'PUT', 'PATCH', 'DELETE'])) {
             $operation = OperationJournal::getOperation($request);
 
+            $query = $request->query();
+            $except = array_keys($request->query());
+            if ($request->has('password')) {
+                $except[] = 'password';
+            }
+
             OperationJournal::create([
                 'user_id' => $user->id,
                 'user_type' => $user->getUserType(),
@@ -38,8 +44,8 @@ class Journal
                 'target' => $operation['target'],
                 'method' => $request->method(),
                 'path' => $request->path(),
-                'query' => $request->query(),
-                'params' => $request->except(array_keys($request->query())),
+                'query' => $query,
+                'params' => $request->except($except),
                 'ip' => $request->ip()
             ]);
         }
