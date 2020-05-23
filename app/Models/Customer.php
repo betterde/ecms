@@ -74,6 +74,11 @@ class Customer extends Authenticatable implements JWTSubject, UserTypeInterface
     protected $guarded = [];
 
     /**
+     * @var string[] $hidden
+     */
+    protected $hidden = ['password'];
+
+    /**
      * Define orders relation
      *
      * Date: 2020/4/19
@@ -115,6 +120,16 @@ class Customer extends Authenticatable implements JWTSubject, UserTypeInterface
     public function invitations()
     {
         return $this->morphMany(Invitation::class, 'initiator');
+    }
+
+    /**
+     * Date: 2020/5/23
+     * @return MorphMany
+     * @author George
+     */
+    public function journals()
+    {
+        return $this->morphMany(Journal::class, 'journalable', 'user_type', 'user_id');
     }
 
     /**

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Eloquent;
 use DateTimeInterface;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Model;
 
@@ -80,7 +81,7 @@ class Journal extends Model
             ]
         ],
         'auth/signin' => [
-            'target' => null,
+            'target' => '自己',
             'actions' => [
                 'POST' => '登录'
             ]
@@ -96,6 +97,16 @@ class Journal extends Model
             'action' => $operation['actions'][$request->method()],
             'target' => $operation['target']
         ];
+    }
+
+    /**
+     * Date: 2020/5/23
+     * @return MorphTo
+     * @author George
+     */
+    public function journalable()
+    {
+        return $this->morphTo('journalable', 'user_type', 'user_id');
     }
 
     /**

@@ -127,6 +127,16 @@ class User extends Authenticatable implements MustVerifyEmail, JWTSubject, UserT
     }
 
     /**
+     * Date: 2020/5/23
+     * @return MorphMany
+     * @author George
+     */
+    public function journals()
+    {
+        return $this->morphMany(Journal::class, 'journalable', 'user_type', 'user_id');
+    }
+
+    /**
      * Date: 2020/5/15
      * @param DateTimeInterface $dateTime
      * @return string
