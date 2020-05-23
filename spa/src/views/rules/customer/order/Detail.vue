@@ -120,7 +120,7 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="单价" prop="price">
-              <el-input-number v-model="create.params.price" :min="0" :precision="2" :controls="false" :disabled="order.type === '损耗'" @change="changePrice" placeholder="请输入单价"></el-input-number>
+              <el-input-number v-model="create.params.price" :min="0" :precision="2" :controls="false" @change="changePrice" placeholder="请输入单价" disabled></el-input-number>
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -299,6 +299,7 @@
           logistic: null,
         },
         tradings: [],
+        discounts: [],
         commodities: [],
         logistic: {
           create: {
@@ -621,11 +622,39 @@
         });
       },
       changeCommodity(id) {
+        // 当选择的商品被清空后则恢复单价
+        if (id === '') {
+          this.create.params.price = 0.00;
+          return false;
+        }
+
         this.commodities.forEach((group) => {
           group.options.forEach((commodity) => {
             if (commodity.id === id) {
               this.create.amount = commodity.amount;
             }
+          });
+        });
+
+        api.discount.fetchDiscount({
+          commodity_id: id
+        }).then(res => {
+          if (res.data.length === 0) {
+            this.$message.error({
+              offset: 95,
+              message: '无法获取商品价格表'
+            });
+            return false;
+          }
+          res.data.forEach(item => {
+            if (item.number === this.order.discount) {
+              this.create.params.price = item.price;
+            }
+          });
+        }).catch(err => {
+          this.$message.error({
+            offset: 95,
+            message: err.message
           });
         });
       },
