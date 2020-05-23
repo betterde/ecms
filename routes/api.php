@@ -31,6 +31,7 @@ Route::group(['prefix' => 'system', 'namespace' => 'System'], function () {
 Route::group(['middleware' => 'auth:users,customer'], function () {
     Route::get('dashboard', 'DashboardController@index');
     Route::apiResource('trading', 'TradingController')->except('update');
+    Route::apiResource('user', 'UserController');
     Route::apiResource('customer', 'CustomerController');
     Route::get('commodity/brand', 'CommodityController@brand');
     Route::get('commodity/category', 'CommodityController@category');
@@ -48,4 +49,5 @@ Route::group(['middleware' => 'auth:users,customer'], function () {
     Route::apiResource('invitation', 'InvitationController')->except('update');
     Route::put('logistics/{logistic}/number', 'LogisticsController@number');
     Route::apiResource('logistics', 'LogisticsController');
+    Route::apiResource('journal', 'JournalController')->except(['post', 'put', 'patch']);
 });
