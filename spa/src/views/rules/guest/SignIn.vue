@@ -110,7 +110,9 @@
               platform: 'Google',
               guard: this.credentials.guard
             }).then(() => {
-              store.dispatch('fetchProfile').then(() => {
+              store.dispatch('fetchProfile').then(res => {
+                this.loading = false;
+                this.$router.addRoutes(register(res.data.type));
                 this.$router.replace('/')
               });
             }).catch(err => {

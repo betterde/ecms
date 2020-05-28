@@ -122,6 +122,12 @@ class Journal extends Model
             'actions' => [
                 'POST' => '登录'
             ]
+        ],
+        'auth/issue' => [
+            'target' => '自己',
+            'actions' => [
+                'POST' => 'Google 登录'
+            ]
         ]
     ];
 
