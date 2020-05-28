@@ -37,6 +37,10 @@ class Journal
                 $except[] = 'password';
             }
 
+            if ($request->has('access_token')) {
+                $except[] = 'access_token';
+            }
+
             OperationJournal::create([
                 'user_id' => $user->id,
                 'user_type' => $user->getUserType(),
