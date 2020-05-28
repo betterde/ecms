@@ -130,8 +130,9 @@ class AuthenticationController extends Controller
 
         switch ($params['platform']) {
             case 'Google':
+                $address = sprintf('%s://%s:%s', config('proxy.type'), config('proxy.server'), config('proxy.port'));
                 $httpClient = new Client([
-                    'proxy' => 'socks5h://127.0.0.1:1080',
+                    'proxy' => $address,
                     'verify' => false
                 ]);
                 $client = new Google_Client(['client_id' => config('services.google.client_id')]);
