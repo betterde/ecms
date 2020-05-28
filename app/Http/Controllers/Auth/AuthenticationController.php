@@ -128,7 +128,12 @@ class AuthenticationController extends Controller
 
         switch ($params['platform']) {
             case 'Google':
+                $httpClient = new Client([
+                    'proxy' => 'socks5h://127.0.0.1:1080',
+                    'verify' => false
+                ]);
                 $client = new Google_Client(['client_id' => config('services.google.client_id')]);
+                $client->setHttpClient($httpClient);
                 $payload = $client->verifyIdToken($params['access_token']);
                 if ($payload) {
                     /**
