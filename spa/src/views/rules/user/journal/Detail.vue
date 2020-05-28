@@ -59,9 +59,9 @@
           </tbody>
         </table>
         <el-divider v-if="journal.query.length > 0" content-position="center">查询参数</el-divider>
-        <pre v-if="journal.query.length > 0">{{journal.query}}</pre>
+        <pre class="json-code" v-if="journal.query.length > 0">{{journal.query}}</pre>
         <el-divider content-position="center">请求参数</el-divider>
-        <pre>{{journal.params}}</pre>
+        <pre class="json-code" >{{journal.params}}</pre>
       </div>
     </div>
   </div>
@@ -136,5 +136,9 @@
   }
   .statement {
     text-align: center;
+  }
+  .json-code {
+    white-space: pre-wrap;
+    word-wrap: break-word;
   }
 </style>
