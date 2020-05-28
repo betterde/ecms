@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
-use App\Contracts\UserTypeInterface;
 use Eloquent;
 use DateTimeInterface;
 use App\Traits\HasUserType;
 use Illuminate\Support\Carbon;
 use App\Notifications\ResetPassword;
+use App\Contracts\UserTypeInterface;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -124,6 +124,16 @@ class User extends Authenticatable implements MustVerifyEmail, JWTSubject, UserT
     public function invitations()
     {
         return $this->morphMany(Invitation::class, 'initiator');
+    }
+
+    /**
+     * Date: 2020/5/28
+     * @return MorphMany
+     * @author George
+     */
+    public function certificates()
+    {
+        return $this->morphMany(Certificate::class, 'ownerable', 'owner_type', 'owner_id');
     }
 
     /**

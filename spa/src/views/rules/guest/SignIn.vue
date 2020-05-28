@@ -7,7 +7,7 @@
       <div class="panel-body">
         <el-form :model="credentials" :rules="rules" ref="signin">
           <el-form-item>
-            <el-select style="width: 100%" v-model="credentials.guard" placeholder="请选择您的用户类型">
+            <el-select style="width: 100%" v-model="credentials.guard" @change="changeHandler" placeholder="请选择您的用户类型">
               <el-option label="管理员" value="user"></el-option>
               <el-option label="高级会员" value="customer"></el-option>
             </el-select>
@@ -43,6 +43,9 @@
     data() {
       return {
         loading: false,
+        platform: {
+          google: false
+        },
         credentials: {
           guard: '',
           username: '',
@@ -59,6 +62,16 @@
       }
     },
     methods: {
+      changeHandler(guard) {
+        if (guard === 'user' && this.platform.google === true) {
+          let script = document.createElement('script');
+          script.setAttribute('src', 'https://apis.google.com/js/platform.js');
+          script.async = true;
+          script.defer = true;
+          document.body.appendChild(script);
+          script.onload = () => this.initGoogleAPI();
+        }
+      },
       submit() {
         this.$refs.signin.validate(valid => {
           if (valid) {
@@ -94,7 +107,8 @@
             gapi.auth2.getAuthInstance().disconnect();
             store.dispatch('verification', {
               access_token: user.getAuthResponse(true).id_token,
-              platform: 'Google'
+              platform: 'Google',
+              guard: this.credentials.guard
             }).then(() => {
               store.dispatch('fetchProfile').then(() => {
                 this.$router.replace('/')
@@ -115,14 +129,7 @@
     },
     mounted() {
       api.system.fetchPlatform().then(res => {
-        if (res.data.google === true) {
-          let script = document.createElement('script');
-          script.setAttribute('src', 'https://apis.google.com/js/platform.js');
-          script.async = true;
-          script.defer = true;
-          document.body.appendChild(script);
-          script.onload = () => this.initGoogleAPI();
-        }
+        this.platform = res.data;
       });
     }
   }

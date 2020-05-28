@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
-use App\Contracts\UserTypeInterface;
-use App\Traits\HasUserType;
 use DateTimeInterface;
+use App\Traits\HasUserType;
 use Illuminate\Support\Carbon;
+use App\Contracts\UserTypeInterface;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Builder;
@@ -120,6 +120,16 @@ class Customer extends Authenticatable implements JWTSubject, UserTypeInterface
     public function invitations()
     {
         return $this->morphMany(Invitation::class, 'initiator');
+    }
+
+    /**
+     * Date: 2020/5/28
+     * @return MorphMany
+     * @author George
+     */
+    public function certificates()
+    {
+        return $this->morphMany(Certificate::class, 'ownerable', 'owner_type', 'owner_id');
     }
 
     /**

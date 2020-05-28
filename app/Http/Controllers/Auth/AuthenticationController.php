@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Models\Certificate;
 use Throwable;
 use Google_Client;
 use App\Models\User;
@@ -123,7 +124,8 @@ class AuthenticationController extends Controller
     {
         $params = $this->validate($request, [
             'access_token' => 'required',
-            'platform' => 'required'
+            'platform' => 'required',
+            'guard' => 'in:user,customer'
         ]);
 
         switch ($params['platform']) {
@@ -137,17 +139,33 @@ class AuthenticationController extends Controller
                 $payload = $client->verifyIdToken($params['access_token']);
                 if ($payload) {
                     /**
-                     * 根据用户凭证获取用户信息
-                     *
-                     * @var User|Customer $user
+                     * @var Certificate $certificate
                      */
-                    $user = User::where('email', $payload['email'])->first();
-                    if (is_null($user)) {
-                        return failed('用户信息不存在！');
-                    }
-                    if (is_null($user->union_id)) {
-                        $user->union_id = $payload['sub'];
-                        $user->saveOrFail();
+                    $certificate = Certificate::with('ownerable')->where('identity', $payload['sub'])->first();
+                    if ($certificate) {
+                        /**
+                         * 根据用户凭证获取用户信息
+                         *
+                         * @var User|Customer $user
+                         */
+                        $user = $certificate->ownerable;
+                    } else {
+                        if ($params['guard'] === 'user') {
+                            $user = User::where('email', $payload['email'])->first();
+                        } else {
+                            $user = Customer::where('email', $payload['email'])->first();
+                        }
+
+                        if (is_null($user)) {
+                            return failed('用户信息不存在！');
+                        }
+
+                        Certificate::create([
+                            'owner_id' => $user->getKey(),
+                            'owner_type' => $params['guard'],
+                            'identity' => $payload['sub'],
+                            'platform' => $params['platform'],
+                        ]);
                     }
 
                     try {
