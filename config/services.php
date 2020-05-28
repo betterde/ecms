@@ -31,6 +31,7 @@ return [
     ],
 
     'google' => [
+        'enable' => env('GOOGLE_SIGNIN'),
         'client_id' => env('GOOGLE_CLIENT_ID'),
         'client_secret' => env('GOOGLE_CLIENT_SECRET'),
         'redirect' => env('GOOGLE_REDIRECT')

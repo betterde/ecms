@@ -10,7 +10,7 @@ class PlatformController extends Controller
     public function status(Request $request)
     {
         return success([
-            'google' => env('GOOGLE_SIGNIN')
+            'google' => config('services.google.enable')
         ]);
     }
 }
