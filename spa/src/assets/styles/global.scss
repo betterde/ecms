@@ -195,3 +195,17 @@ textarea {
 .el-divider__text {
   color: #99a9bf;
 }
+
+/* Table animation */
+@for $i from 0 through 50 {
+  .el-table__body {
+    .el-table__row:nth-child(#{$i}) {
+      opacity: 0;
+      animation: table-show 130ms $i * 20ms forwards ease-out;
+    }
+  }
+}
+@keyframes table-show {
+  0% { transform: translateY(10px); opacity: .1; }
+  100% { transform: translateY(0); opacity: 1; }
+}
