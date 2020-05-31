@@ -143,7 +143,10 @@
       <el-table v-loading="loading" :data="inventories" @sort-change="changeSort" style="width: 100%">
         <el-table-column label="图片">
           <template slot-scope="scope">
-            <el-image style="width: 80px; height: 80px" :src="scope.row.image" fit="cover"></el-image>
+            <el-image style="width: 80px; height: 80px" :src="scope.row.image" fit="cover">
+              <div v-if="scope.row.image === null" slot="error" class="el-image__error">无图片</div>
+              <div v-else slot="error" class="el-image__error">加载失败</div>
+            </el-image>
           </template>
         </el-table-column>
         <el-table-column prop="brand" label="品牌"></el-table-column>
