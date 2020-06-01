@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Models\Certificate;
 use Throwable;
 use Google_Client;
 use App\Models\User;
 use GuzzleHttp\Client;
 use App\Models\Customer;
+use App\Models\Certificate;
 use Tymon\JWTAuth\JWTGuard;
 use Illuminate\Support\Arr;
 use Illuminate\Http\Request;

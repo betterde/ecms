@@ -3,20 +3,94 @@ info:
   title: ECMS
   description: ECMS API documents
   version: 1.0.0
+  contact:
+    name: George
+    url: https://ecms.betterde.com
+    email: george@betterde.com
   license:
     name: MIT
     url: https://github.com/betterde/ecms/blob/master/LICENSE
 servers:
   - url: https://ecms.betterde.com
     description: Production server
-  - url: https://ecms.it
+  - url: http://ecms.it
     description: Develop server
 tags:
+  - name: Auth
+    description: User auth API
   - name: Order
     description: Order API
   - name: User
     description: User API
 paths:
+  /api/auth/signin:
+    post:
+      tags:
+        - Auth
+      summary: Sign in
+      description: User or Customer sign in API.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                username:
+                  type: string
+                  required: true
+                  description: User name
+                password:
+                  type: string
+                  required: true
+                  description: User password
+                guard:
+                  type: string
+                  required: true
+                  description: User guard type
+            examples:
+              user:
+                summary: User
+                description: User sign in body
+                value:
+                  username: george@betterde.com
+                  password: George@betterde.com
+                  guard: user
+              customer:
+                summary: Customer
+                description: Customer sign in body
+                value:
+                  username: george@betterde.com
+                  password: George@betterde.com
+                  guard: composer
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  email:
+                    type: string
+                  token_type:
+                    type: string
+                  expires_in:
+                    type: integer
+                  access_token:
+                    type: string
+              examples:
+                success:
+                  summary: Sign in success
+                  value:
+                    id: 70c58392-2782-4ee9-ac9c-605c90c1f9c8
+                    name: George
+                    email: george@betterde.com
+                    token_type: Bearer
+                    expires_in: 338372
+                    access_token: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9lY21zLml0XC9hcGlcL2F1dGhcL3NpZ25pbiIsImlhdCI6MTU5MDIyMTk4MCwiZXhwIjoxNTkyODEzOTgwLCJuYmYiOjE1OTAyMjE5ODAsImp0aSI6Inp2WUZSSlJkbHMzdTlpdHUiLCJzdWIiOiIxOGJhMzg0Zi03ZDczLTQwZTAtODU5YS00YmIwZTgwNzA1YTAiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3IiwiZ3VhcmQiOiJ1c2VycyJ9.YoZUEA3K5F7dKcVk17ZFpNZcT1TIKZBOT6Z1KFSeZfY
   /user:
     get:
       tags:
@@ -41,11 +115,28 @@ paths:
         '200':
           description: Success
 components:
+  schemas:
+    ResponseSuccess:
+      type: object
+      properties:
+        code:
+          type: integer
+        message:
+          type: string
+        data:
+          type: array
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
       bearerFormat: JWT
+  responses:
+    Success:
+      description: Success
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResponseSuccess'
 security:
   - bearerAuth: []
 
