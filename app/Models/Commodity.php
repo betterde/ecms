@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * 商品信息数据模型
+ * Commodify data model
  *
  * Date: 2020/2/4
  * @author George
@@ -76,6 +76,8 @@ class Commodity extends Model
     }
 
     /**
+     * Modify serialize date format
+     *
      * Date: 2020/5/15
      * @param DateTimeInterface $dateTime
      * @return string

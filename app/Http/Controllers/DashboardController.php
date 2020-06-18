@@ -10,6 +10,13 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * Dashboard controller
+ *
+ * Date: 2020/6/19
+ * @author George
+ * @package App\Http\Controllers
+ */
 class DashboardController extends Controller
 {
     /**

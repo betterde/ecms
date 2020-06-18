@@ -7,6 +7,13 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Http\JsonResponse;
 
+/**
+ * Logistics logic controller
+ *
+ * Date: 2020/6/19
+ * @author George
+ * @package App\Http\Controllers
+ */
 class LogisticsController extends Controller
 {
     /**
@@ -38,17 +45,6 @@ class LogisticsController extends Controller
 
         $logistic = Logistics::create($attributes);
         return stored($logistic);
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return Response
-     */
-    public function show($id)
-    {
-        //
     }
 
     /**
@@ -90,16 +86,5 @@ class LogisticsController extends Controller
         $logistic->order()->update(['status' => 'completed']);
         $logistic->update($attributes);
         return updated($logistic);
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return Response
-     */
-    public function destroy($id)
-    {
-        //
     }
 }

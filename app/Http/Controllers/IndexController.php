@@ -15,6 +15,8 @@ use Illuminate\Support\Facades\View;
 class IndexController extends Controller
 {
     /**
+     * Index page view
+     *
      * Date: 2020/5/21
      * @return JsonResponse|\Illuminate\View\View
      * @author George

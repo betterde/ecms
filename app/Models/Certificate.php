@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 /**
+ * User certificate data model
+ *
  * Date: 2020/5/28
  * @author George
  * @package App\Models
@@ -20,6 +22,8 @@ class Certificate extends Model
     protected $guarded = ['id'];
 
     /**
+     * Defines the association that gets the certificate owner
+     *
      * Date: 2020/5/28
      * @return MorphTo
      * @author George

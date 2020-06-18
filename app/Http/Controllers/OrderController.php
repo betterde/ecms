@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Customer;
 use Exception;
 use App\Models\Order;
+use App\Models\Customer;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Excel;
 use Illuminate\Http\JsonResponse;
@@ -23,7 +23,7 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 class OrderController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display a listing of the order resource.
      *
      * @param Request $request
      * @return JsonResponse
@@ -159,6 +159,8 @@ class OrderController extends Controller
     }
 
     /**
+     * Modify order status
+     *
      * Date: 2020/5/18
      * @param Order $order
      * @param Request $request

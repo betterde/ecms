@@ -76,7 +76,7 @@ class CommodityController extends Controller
     }
 
     /**
-     * 获取库存商品的品牌列表信息
+     * Get a listing of the brand resource
      *
      * Date: 2019/12/28
      * @return JsonResponse
@@ -89,7 +89,7 @@ class CommodityController extends Controller
     }
 
     /**
-     * 获取库存商品的分类列表信息
+     * Get a listing of the category resource
      *
      * Date: 2019/12/28
      * @param Request $request
@@ -103,7 +103,7 @@ class CommodityController extends Controller
     }
 
     /**
-     * 获取库存商品的单位信息列表
+     * Get a listing of the unit resource
      *
      * Date: 2020/3/27
      * @return JsonResponse
@@ -116,7 +116,7 @@ class CommodityController extends Controller
     }
 
     /**
-     * 上传商品图片
+     * Modify the commodity image
      *
      * Date: 2020/5/14
      * @param Request $request

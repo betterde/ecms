@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Validation\ValidationException;
 
 /**
- * 交易数据模型
+ * Trading logic controller
  *
  * Date: 2019/12/28
  * @author George
@@ -24,6 +24,8 @@ use Illuminate\Validation\ValidationException;
 class TradingController extends Controller
 {
     /**
+     * Display a listing of the trading
+     *
      * Date: 2019/12/28
      * @param Request $request
      * @return JsonResponse

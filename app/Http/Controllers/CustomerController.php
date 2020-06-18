@@ -11,6 +11,13 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Validation\ValidationException;
 
+/**
+ * Customer logic controller
+ *
+ * Date: 2020/6/19
+ * @author George
+ * @package App\Http\Controllers
+ */
 class CustomerController extends Controller
 {
     /**

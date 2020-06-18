@@ -60,6 +60,8 @@ class JournalController extends Controller
     }
 
     /**
+     * Get operation journal by id
+     *
      * Date: 2020/5/23
      * @param Journal $journal
      * @return JsonResponse

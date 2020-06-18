@@ -16,6 +16,12 @@ use Illuminate\Validation\ValidationException;
 
 class InvitationController extends Controller
 {
+    /**
+     * Date: 2020/6/19
+     * @param Request $request
+     * @return JsonResponse
+     * @author George
+     */
     public function index(Request $request)
     {
         $size = $request->get('size', 15);
@@ -39,6 +45,8 @@ class InvitationController extends Controller
     }
 
     /**
+     * Create invitation resource
+     *
      * Date: 2020/5/11
      * @param Request $request
      * @return JsonResponse
@@ -73,6 +81,8 @@ class InvitationController extends Controller
     }
 
     /**
+     * Get invitation resource by id
+     *
      * Date: 2020/5/12
      * @param Invitation $invitation
      * @return JsonResponse
@@ -84,6 +94,8 @@ class InvitationController extends Controller
     }
 
     /**
+     * Delete invitation resource by id
+     *
      * Date: 2020/5/12
      * @param Invitation $invitation
      * @return JsonResponse

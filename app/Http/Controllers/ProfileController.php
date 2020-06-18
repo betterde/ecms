@@ -17,6 +17,8 @@ use Illuminate\Auth\EloquentUserProvider;
 use Illuminate\Validation\ValidationException;
 
 /**
+ * Profile logic controller
+ *
  * Date: 2020/4/17
  * @author George
  * @package App\Http\Controllers
@@ -24,6 +26,8 @@ use Illuminate\Validation\ValidationException;
 class ProfileController extends Controller
 {
     /**
+     * Get user profile
+     *
      * Date: 2020/4/17
      * @param User $user
      * @return JsonResponse
@@ -35,6 +39,8 @@ class ProfileController extends Controller
     }
 
     /**
+     * Modify user profile
+     *
      * Date: 2020/4/17
      * @param User $user
      * @param Request $request
@@ -70,6 +76,8 @@ class ProfileController extends Controller
     }
 
     /**
+     * Modify user password
+     *
      * Date: 2020/5/15
      * @param Request $request
      * @param Hasher $hasher
@@ -101,7 +109,7 @@ class ProfileController extends Controller
     }
 
     /**
-     * 修改地址
+     * Modify user address
      *
      * Date: 2020/5/15
      * @param Request $request
@@ -124,7 +132,7 @@ class ProfileController extends Controller
     }
 
     /**
-     * 上传头像
+     * Modify user avatar
      *
      * Date: 2020/4/24
      * @param Request $request

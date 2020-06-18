@@ -8,6 +8,13 @@ use Illuminate\Http\Response;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Database\Eloquent\Builder;
 
+/**
+ * User logic controller
+ *
+ * Date: 2020/6/19
+ * @author George
+ * @package App\Http\Controllers
+ */
 class UserController extends Controller
 {
     /**
