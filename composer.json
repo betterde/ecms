@@ -1,11 +1,12 @@
 {
-    "name": "laravel/laravel",
+    "name": "betterde/ecms",
     "type": "project",
     "version": "1.1.0",
-    "description": "The Laravel Framework.",
+    "description": "E-Commerce Managerment System.",
     "keywords": [
-        "framework",
-        "laravel"
+        "E-Commerce",
+        "laravel",
+        "CRM"
     ],
     "license": "MIT",
     "require": {
