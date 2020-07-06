@@ -275,6 +275,7 @@
           profit: 0,
           actual: 0,
           remark: '',
+          status: null,
           logistic: null,
           created_at: ''
         },
